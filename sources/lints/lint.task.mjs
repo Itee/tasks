@@ -7,9 +7,8 @@ import {
     relative
 }                    from 'path'
 import {
-    iteePackageConfigurationsDirectory,
-    packageRootDirectory,
-    packageTasksConfigurationsDirectory
+    getConfigurationPathFor,
+    packageRootDirectory
 }                    from '../_utils.mjs'
 
 const execFile = promisify( child_process.execFile )
@@ -20,8 +19,8 @@ const {
           cyan
       }        = colors
 
-const configurationPath        = join( packageTasksConfigurationsDirectory, 'lints', 'eslint.conf.mjs' )
-const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, 'lints', 'eslint.conf.mjs' )
+const configurationLocation = join( 'lints', 'lint.conf.mjs' )
+const configurationPath     = getConfigurationPathFor( configurationLocation )
 
 /**
  * @method npm run lint

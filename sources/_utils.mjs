@@ -1,25 +1,25 @@
 import colors            from 'ansi-colors'
 import childProcess      from 'child_process'
 import log               from 'fancy-log'
-import {
-    existsSync,
-    mkdirSync,
-    readFileSync,
-    writeFileSync
-}                        from 'fs'
 import { glob }          from 'glob'
 import {
     parallel,
     series
 }                        from 'gulp'
 import {
+    existsSync,
+    mkdirSync,
+    readFileSync,
+    writeFileSync
+}                        from 'node:fs'
+import {
     dirname,
     extname,
     join,
     normalize,
     relative,
-}                        from 'path'
-import { fileURLToPath } from 'url'
+}                        from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const {
           red,
@@ -48,7 +48,32 @@ function getJsonFrom( path ) {
 
 }
 
-async function getConfigurationFrom( path, defaultPath ) {
+function getConfigurationPathFor( configurationLocation ) {
+
+    const packageConfigurationPath = join( packageTasksConfigurationsDirectory, configurationLocation )
+    const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, configurationLocation )
+
+    let configurationPath
+
+    if ( existsSync( packageConfigurationPath ) ) {
+
+        configurationPath = packageConfigurationPath
+
+    } else if ( existsSync( defaultConfigurationPath ) ) {
+
+        configurationPath = defaultConfigurationPath
+
+    } else {
+
+        throw new Error( `Unable to find configuration for path ${ packageConfigurationPath } or ${ defaultConfigurationPath }` )
+
+    }
+
+    return configurationPath
+
+}
+
+async function getConfigurationFrom( path ) {
 
     let jsonData = null
 
@@ -67,11 +92,7 @@ async function getConfigurationFrom( path, defaultPath ) {
 
     } catch ( e ) {
 
-        if ( defaultPath ) {
-            jsonData = await getConfigurationFrom( defaultPath, null )
-        } else {
-            log( red( e ) )
-        }
+        log( red( e ) )
 
     }
 
@@ -260,6 +281,9 @@ async function parallelizeTasksFrom( taskFiles = [] ) {
 
 ///
 
+
+///
+
 function IndenterFactory( indentationChar = '\t', indentationLevel = 5 ) {
 
     const indentationLevels = {}
@@ -304,6 +328,7 @@ class Indenter {
 export {
     createDirectoryIfNotExist,
     getJsonFrom,
+    getConfigurationPathFor,
     getConfigurationFrom,
     createFile,
     getFilesFrom,

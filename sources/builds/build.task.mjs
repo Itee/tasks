@@ -7,9 +7,8 @@ import {
 import { rollup } from 'rollup'
 import {
     getConfigurationFrom,
-    iteePackageConfigurationsDirectory,
-    packageRootDirectory,
-    packageTasksConfigurationsDirectory
+    getConfigurationPathFor,
+    packageRootDirectory
 }                 from '../_utils.mjs'
 
 const {
@@ -20,13 +19,13 @@ const {
           cyan
       } = colors
 
-const configurationPath        = join( packageTasksConfigurationsDirectory, 'builds', 'build.conf.mjs' )
-const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, 'builds', 'build.conf.mjs' )
-const configurations           = await getConfigurationFrom( configurationPath, defaultConfigurationPath )
+const configurationLocation = join( 'builds', 'build.conf.mjs' )
+const configurationPath     = getConfigurationPathFor( configurationLocation )
+const configuration         = await getConfigurationFrom( configurationPath )
 
 const buildTask       = async ( done ) => {
 
-    for ( let config of configurations ) {
+    for ( let config of configuration ) {
 
         if ( config === undefined || config === null || config.length === 0 ) {
             log( yellow( 'Empty configuration object... Skip it!' ) )

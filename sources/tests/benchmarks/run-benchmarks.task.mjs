@@ -6,9 +6,8 @@ import {
 }             from 'path'
 import {
     getConfigurationFrom,
-    iteePackageConfigurationsDirectory,
+    getConfigurationPathFor,
     packageRootDirectory,
-    packageTasksConfigurationsDirectory,
     serializeTasksFrom
 }             from '../../_utils.mjs'
 
@@ -18,9 +17,9 @@ const {
           cyan
       } = colors
 
-const configurationPath        = join( packageTasksConfigurationsDirectory, 'tests', 'benchmarks', 'run-benchmarks.conf.mjs' )
-const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, 'tests', 'benchmarks', 'run-benchmarks.conf.mjs' )
-const configuration            = await getConfigurationFrom( configurationPath, defaultConfigurationPath )
+const configurationLocation = join( 'tests', 'benchmarks', 'run-benchmarks.conf.mjs' )
+const configurationPath     = getConfigurationPathFor( configurationLocation )
+const configuration         = await getConfigurationFrom( configurationPath )
 
 const runBenchmarksTestsTask       = await serializeTasksFrom( configuration )
 runBenchmarksTestsTask.displayName = 'run-benchmarks'

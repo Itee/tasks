@@ -13,20 +13,19 @@ import {
     createDirectoryIfNotExist,
     createFile,
     getConfigurationFrom,
+    getConfigurationPathFor,
     getPrettyPackageName,
     Indenter,
-    iteePackageConfigurationsDirectory,
     packageName,
     packageNodeModulesDirectory,
     packageRootDirectory,
     packageSourcesDirectory as sourcesDir,
-    packageTasksConfigurationsDirectory,
     packageTestsUnitsDirectory as unitsDir
 }                          from '../../_utils.mjs'
 
-const configurationPath        = join( packageTasksConfigurationsDirectory, 'tests', 'units', 'compute-unit-tests.conf.mjs' )
-const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, 'tests', 'units', 'compute-unit-tests.conf.mjs' )
-const configuration            = await getConfigurationFrom( configurationPath, defaultConfigurationPath )
+const configurationLocation = join( 'tests', 'units', 'compute-unit-tests.conf.mjs' )
+const configurationPath     = getConfigurationPathFor( configurationLocation )
+const configuration         = await getConfigurationFrom( configurationPath )
 
 const {
           red,

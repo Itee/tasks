@@ -12,12 +12,11 @@ import {
     createDirectoryIfNotExist,
     createFile,
     getConfigurationFrom,
-    iteePackageConfigurationsDirectory,
+    getConfigurationPathFor,
     packageName,
     packageNodeModulesDirectory,
     packageRootDirectory,
     packageSourcesDirectory as sourcesDir,
-    packageTasksConfigurationsDirectory,
     packageTestsBenchmarksDirectory as benchesDir,
     packageTestsDirectory
 }                   from '../../_utils.mjs'
@@ -30,9 +29,9 @@ const {
           cyan
       } = colors
 
-const configurationPath        = join( packageTasksConfigurationsDirectory, 'tests', 'benchmarks', 'compute-benchmarks.conf.mjs' )
-const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, 'tests', 'benchmarks', 'compute-benchmarks.conf.mjs' )
-const configuration            = await getConfigurationFrom( configurationPath, defaultConfigurationPath )
+const configurationLocation = join( 'tests', 'benchmarks', 'compute-benchmarks.conf.mjs' )
+const configurationPath     = getConfigurationPathFor( configurationLocation )
+const configuration         = await getConfigurationFrom( configurationPath )
 
 /**
  * @description Will generate benchmarks files from source code against provided alternatives

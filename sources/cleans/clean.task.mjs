@@ -7,9 +7,8 @@ import {
 }                      from 'path'
 import {
     getConfigurationFrom,
-    iteePackageConfigurationsDirectory,
-    packageRootDirectory,
-    packageTasksConfigurationsDirectory
+    getConfigurationPathFor,
+    packageRootDirectory
 }                      from '../_utils.mjs'
 
 const {
@@ -19,9 +18,9 @@ const {
           cyan
       } = colors
 
-const configurationPath        = join( packageTasksConfigurationsDirectory, 'cleans', 'clean.conf.mjs' )
-const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, 'cleans', 'clean.conf.mjs' )
-const configuration            = await getConfigurationFrom( configurationPath, defaultConfigurationPath )
+const configurationLocation = join( 'cleans', 'clean.conf.mjs' )
+const configurationPath     = getConfigurationPathFor( configurationLocation )
+const configuration         = await getConfigurationFrom( configurationPath )
 
 /**
  * @method npm run clean

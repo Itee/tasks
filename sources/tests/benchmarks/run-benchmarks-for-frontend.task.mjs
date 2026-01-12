@@ -7,9 +7,8 @@ import {
 }                          from 'path'
 import {
     getConfigurationFrom,
-    iteePackageConfigurationsDirectory,
-    packageRootDirectory,
-    packageTasksConfigurationsDirectory
+    getConfigurationPathFor,
+    packageRootDirectory
 }                          from '../../_utils.mjs'
 
 const {
@@ -19,8 +18,8 @@ const {
           cyan
       } = colors
 
-const configurationPath        = join( packageTasksConfigurationsDirectory, 'tests', 'benchmarks', 'run-benchmarks-for-frontend.conf.mjs' )
-const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, 'tests', 'benchmarks', 'run-benchmarks-for-frontend.conf.mjs' )
+const configurationLocation = join( 'tests', 'benchmarks', 'run-benchmarks-for-frontend.conf.mjs' )
+const configurationPath     = getConfigurationPathFor( configurationLocation )
 
 /**
  * @description Will run benchmarks with web-test-runner
@@ -28,7 +27,7 @@ const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, 'test
 const runBenchmarksForFrontendTask       = () => {
     return new Promise( async ( resolve, reject ) => {
 
-        const configuration = await getConfigurationFrom( configurationPath, defaultConfigurationPath )
+        const configuration = await getConfigurationFrom( configurationPath )
         const testRunner    = await startTestRunner( {
             config:          configuration,
             readCliArgs:     false,

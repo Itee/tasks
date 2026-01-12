@@ -7,9 +7,8 @@ import {
 }                          from 'path'
 import {
     getConfigurationFrom,
-    iteePackageConfigurationsDirectory,
-    packageRootDirectory,
-    packageTasksConfigurationsDirectory
+    getConfigurationPathFor,
+    packageRootDirectory
 }                          from '../../_utils.mjs'
 
 const {
@@ -19,8 +18,8 @@ const {
           cyan
       } = colors
 
-const configurationPath        = join( packageTasksConfigurationsDirectory, 'tests', 'units', 'run-unit-tests-for-frontend.conf.mjs' )
-const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, 'tests', 'units', 'run-unit-tests-for-frontend.conf.mjs' )
+const configurationLocation = join( 'tests', 'units', 'run-unit-tests-for-frontend.conf.mjs' )
+const configurationPath     = getConfigurationPathFor( configurationLocation )
 
 /**
  * @description Will run unit tests with web-test-runner
@@ -28,7 +27,7 @@ const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, 'test
 const runUnitTestsForFrontendTask       = () => {
     return new Promise( async ( resolve, reject ) => {
 
-        const configuration = await getConfigurationFrom( configurationPath, defaultConfigurationPath )
+        const configuration = await getConfigurationFrom( configurationPath )
         const testRunner    = await startTestRunner( {
             config:          configuration,
             readCliArgs:     false,

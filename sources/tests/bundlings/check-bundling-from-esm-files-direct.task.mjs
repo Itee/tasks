@@ -14,10 +14,9 @@ import {
 import { rollup } from 'rollup'
 import {
     getConfigurationFrom,
-    iteePackageConfigurationsDirectory,
+    getConfigurationPathFor,
     packageRootDirectory,
     packageSourcesDirectory as sourcesDir,
-    packageTasksConfigurationsDirectory,
     packageTestsBundlesDirectory as bundlesDir
 }                 from '../../_utils.mjs'
 
@@ -29,13 +28,13 @@ const {
           cyan
       } = colors
 
-const sourcesFilesPath        = join( packageTasksConfigurationsDirectory, 'tests', 'bundlings', 'check-bundling.conf.mjs' )
-const defaultSourcesFilesPath = join( iteePackageConfigurationsDirectory, 'tests', 'bundlings', 'check-bundling.conf.mjs' )
-const sourcesFiles            = await getConfigurationFrom( sourcesFilesPath, defaultSourcesFilesPath )
+const sourcesFilesLocation = join( 'tests', 'bundlings', 'check-bundling.conf.mjs' )
+const sourcesFilesPath     = getConfigurationPathFor( sourcesFilesLocation )
+const sourcesFiles         = await getConfigurationFrom( sourcesFilesPath )
 
-const configurationPath        = join( packageTasksConfigurationsDirectory, 'tests', 'bundlings', 'check-bundling-from-esm-files-direct.conf.mjs' )
-const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, 'tests', 'bundlings', 'check-bundling-from-esm-files-direct.conf.mjs' )
-const configuration            = await getConfigurationFrom( configurationPath, defaultConfigurationPath )
+const configurationLocation = join( 'tests', 'bundlings', 'check-bundling-from-esm-files-direct.conf.mjs' )
+const configurationPath     = getConfigurationPathFor( configurationLocation )
+const configuration         = await getConfigurationFrom( configurationPath )
 
 /**
  * @description In view to detect bundling side effects this task will

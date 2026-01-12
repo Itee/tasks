@@ -8,20 +8,20 @@ import {
 }                        from 'path'
 import {
     getConfigurationFrom,
+    getConfigurationPathFor,
     getFilesFrom,
     iteePackageConfigurationsDirectory,
     packageRootDirectory,
     packageTasksConfigurationsDirectory
-}                        from './_utils.mjs'
+} from './_utils.mjs'
 
 const {
           green,
           yellow
       } = colors
 
-const configurationPath        = join( packageTasksConfigurationsDirectory, 'refresh.conf.mjs' )
-const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, 'refresh.conf.mjs' )
-const configuration            = await getConfigurationFrom( configurationPath, defaultConfigurationPath )
+const configurationPath     = getConfigurationPathFor( 'refresh.conf.mjs' )
+const configuration         = await getConfigurationFrom( configurationPath )
 
 // Get and filter tasks to expose
 const defaultTaskFiles = [

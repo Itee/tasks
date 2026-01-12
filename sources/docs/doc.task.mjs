@@ -7,9 +7,8 @@ import {
     relative
 }                    from 'path'
 import {
-    iteePackageConfigurationsDirectory,
-    packageRootDirectory,
-    packageTasksConfigurationsDirectory
+    getConfigurationPathFor,
+    packageRootDirectory
 }                    from '../_utils.mjs'
 
 const execFile = promisify( child_process.execFile )
@@ -20,8 +19,8 @@ const {
           cyan
       }        = colors
 
-const configurationPath        = join( packageTasksConfigurationsDirectory, 'docs', 'doc.conf.json' )
-const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, 'docs', 'doc.conf.json' )
+const configurationLocation = join( 'docs', 'doc.conf.json' )
+const configurationPath     = getConfigurationPathFor( configurationLocation )
 
 /**
  * @method npm run doc

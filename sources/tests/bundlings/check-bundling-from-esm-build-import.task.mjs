@@ -15,11 +15,10 @@ import {
 import { rollup } from 'rollup'
 import {
     getConfigurationFrom,
-    iteePackageConfigurationsDirectory,
+    getConfigurationPathFor,
     packageBuildsDirectory as buildsDir,
     packageName,
     packageRootDirectory,
-    packageTasksConfigurationsDirectory,
     packageTestsBundlesDirectory as bundlesDir
 }                 from '../../_utils.mjs'
 
@@ -31,12 +30,12 @@ const {
           cyan
       } = colors
 
-const configurationPath        = join( packageTasksConfigurationsDirectory, 'tests', 'bundlings', 'check-bundling-from-esm-build-import.conf.mjs' )
-const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, 'tests', 'bundlings', 'check-bundling-from-esm-build-import.conf.mjs' )
+const configurationLocation = join( 'tests', 'bundlings', 'check-bundling-from-esm-build-import.conf.mjs' )
+const configurationPath     = getConfigurationPathFor( configurationLocation )
 
 const checkBundlingFromEsmBuildImportTask       = async ( done ) => {
 
-    const configuration = await getConfigurationFrom( configurationPath, defaultConfigurationPath )
+    const configuration = await getConfigurationFrom( configurationPath )
 
     const buildFilePath = join( buildsDir, `${ packageName }.esm.js` )
     if ( !existsSync( buildFilePath ) ) {
