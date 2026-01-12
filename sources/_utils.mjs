@@ -140,7 +140,7 @@ const packageJsonPath                     = join( packageRootDirectory, 'package
 
 ///
 
-const packageJson        = getJsonFrom( clientPackageJsonPath )
+const packageJson        = getJsonFrom( packageJsonPath )
 const packageName        = packageJson.name
 const packageVersion     = packageJson.version
 const packageDescription = packageJson.description
