@@ -291,7 +291,7 @@ function logLoadingTask( filename, task, configurationPath ) {
 
         const relativeConfigurationPath = relative( packageRootDirectory, configurationPath )
         logValue += `and configuration from ${ cyan( relativeConfigurationPath ) }`
-        
+
     }
 
     log( logValue )

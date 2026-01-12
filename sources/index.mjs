@@ -18,3 +18,4 @@ export { runBenchmarksTestsTask }              from './tests/benchmarks/run-benc
 export { runBenchmarksForBackendTask }         from './tests/benchmarks/run-benchmarks-for-backend.task.mjs'
 export { runBenchmarksForFrontendTask }        from './tests/benchmarks/run-benchmarks-for-frontend.task.mjs'
 
+export * from './_utils.mjs'
