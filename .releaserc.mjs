@@ -87,7 +87,7 @@ function getCIConfig() {
             getGitmojiPlugin(),
             getChangelogPlugin(),
             getNpmPlugin(),
-            // getGithubPlugin(),
+            getGithubPlugin(),
             getGitPlugin()
         ]
     }
