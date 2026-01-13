@@ -24,6 +24,9 @@
   "bugs": {
     "url": "https://github.com/Itee/itee-tasks/issues"
   },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "default": "gulp --tasks",
     "refresh": "node ./sources/refresh.mjs",
