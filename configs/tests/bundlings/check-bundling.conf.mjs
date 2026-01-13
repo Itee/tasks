@@ -9,11 +9,12 @@ import {
     packageSourcesDirectory
 }               from '../../../sources/_utils.mjs'
 
+const pattern = join( packageSourcesDirectory, '**' )
 const filePathsToIgnore = [
     `${ packageName }.js`
 ]
 
-export default glob.sync( join( packageSourcesDirectory, '**' ) )
+export default glob.sync( pattern )
                    .map( filePath => normalize( filePath ) )
                    .filter( filePath => {
                        const fileName         = basename( filePath )

@@ -290,7 +290,7 @@ function logLoadingTask( filename, task, configurationPath ) {
     if ( configurationPath ) {
 
         const relativeConfigurationPath = relative( packageRootDirectory, configurationPath )
-        logValue += `and configuration from ${ cyan( relativeConfigurationPath ) }`
+        logValue += ` and configuration from ${ cyan( relativeConfigurationPath ) }`
 
     }
 

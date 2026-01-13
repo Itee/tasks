@@ -22,6 +22,7 @@ const configurationPath     = getConfigurationPathFor( configurationLocation )
 const docTask       = async ( done ) => {
 
     try {
+
         const { stdout } = await execFile(
             './node_modules/.bin/jsdoc',
             [
@@ -31,21 +32,10 @@ const docTask       = async ( done ) => {
         )
         log( stdout )
         done()
+
     } catch ( error ) {
 
-        try {
-            const { stdout } = await execFile(
-                './node_modules/.bin/jsdoc',
-                [
-                    '--configure', defaultConfigurationPath,
-                    '--destination', './docs'
-                ]
-            )
-            log( stdout )
-            done()
-        } catch ( error ) {
-            done( red( error.message ) )
-        }
+        done( red( error.message ) )
 
     }
 

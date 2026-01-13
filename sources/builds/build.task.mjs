@@ -16,10 +16,10 @@ const {
 
 const configurationLocation = join( 'builds', 'build.conf.mjs' )
 const configurationPath     = getConfigurationPathFor( configurationLocation )
-const configuration         = await getConfigurationFrom( configurationPath )
 
 const buildTask       = async ( done ) => {
 
+    const configuration = await getConfigurationFrom( configurationPath )
     for ( let config of configuration ) {
 
         if ( config === undefined || config === null || config.length === 0 ) {

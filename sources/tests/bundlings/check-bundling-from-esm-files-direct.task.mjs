@@ -15,8 +15,8 @@ import {
     getConfigurationFrom,
     getConfigurationPathFor,
     logLoadingTask,
-    packageSourcesDirectory as sourcesDir,
-    packageTestsBundlesDirectory as bundlesDir
+    packageSourcesDirectory,
+    packageTestsBundlesDirectory
 }                 from '../../_utils.mjs'
 
 const {
@@ -27,11 +27,9 @@ const {
 
 const sourcesFilesLocation = join( 'tests', 'bundlings', 'check-bundling.conf.mjs' )
 const sourcesFilesPath     = getConfigurationPathFor( sourcesFilesLocation )
-const sourcesFiles         = await getConfigurationFrom( sourcesFilesPath )
 
 const configurationLocation = join( 'tests', 'bundlings', 'check-bundling-from-esm-files-direct.conf.mjs' )
 const configurationPath     = getConfigurationPathFor( configurationLocation )
-const configuration         = await getConfigurationFrom( configurationPath )
 
 /**
  * @description In view to detect bundling side effects this task will
@@ -41,15 +39,18 @@ const configuration         = await getConfigurationFrom( configurationPath )
  */
 const checkBundlingFromEsmFilesDirectTask       = async ( done ) => {
 
-    const outputDir = join( bundlesDir, 'from_files_direct' )
+    const outputDir = join( packageTestsBundlesDirectory, 'from_files_direct' )
     if ( existsSync( outputDir ) ) {
         log( 'Clean up', magenta( outputDir ) )
         rmSync( outputDir, { recursive: true } )
     }
 
+    const sourcesFiles  = await getConfigurationFrom( sourcesFilesPath )
+    const configuration = await getConfigurationFrom( configurationPath )
+
     for ( let sourceFile of sourcesFiles ) {
 
-        const specificFilePath = sourceFile.replace( sourcesDir, '' )
+        const specificFilePath = sourceFile.replace( packageSourcesDirectory, '' )
         const specificDir      = dirname( specificFilePath )
         const fileName         = basename( sourceFile, extname( sourceFile ) )
 

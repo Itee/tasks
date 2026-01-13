@@ -29,11 +29,9 @@ const {
 
 const sourcesFilesLocation = join( 'tests', 'bundlings', 'check-bundling.conf.mjs' )
 const sourcesFilesPath     = getConfigurationPathFor( sourcesFilesLocation )
-const sourcesFiles         = await getConfigurationFrom( sourcesFilesPath )
 
 const configurationLocation = join( 'tests', 'bundlings', 'check-bundling-from-esm-files-import.conf.mjs' )
 const configurationPath     = getConfigurationPathFor( configurationLocation )
-const configuration         = await getConfigurationFrom( configurationPath )
 
 const checkBundlingFromEsmFilesImportTask       = async ( done ) => {
 
@@ -44,6 +42,9 @@ const checkBundlingFromEsmFilesImportTask       = async ( done ) => {
         log( 'Clean up', magenta( outputDir ) )
         rmSync( outputDir, { recursive: true } )
     }
+
+    const sourcesFiles  = await getConfigurationFrom( sourcesFilesPath )
+    const configuration = await getConfigurationFrom( configurationPath )
 
     for ( let sourceFile of sourcesFiles ) {
 

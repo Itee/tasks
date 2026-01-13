@@ -32,21 +32,8 @@ const lintTask       = async ( done ) => {
 
     } catch ( error ) {
 
-        try {
-
-            const { stdout } = await execFile( 'npx', [ 'eslint', '--config', defaultConfigurationPath, '--fix' ] )
-            if ( stdout !== '' ) {
-                log( stdout )
-            }
-
-            done()
-
-        } catch ( error ) {
-
-            log( error.stdout )
-            done( red( error.message ) )
-
-        }
+        log( error.stdout )
+        done( red( error.message ) )
 
     }
 
