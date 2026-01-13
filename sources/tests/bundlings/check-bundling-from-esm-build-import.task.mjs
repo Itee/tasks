@@ -15,37 +15,34 @@ import {
 import { rollup } from 'rollup'
 import {
     getConfigurationFrom,
-    packageBuildsDirectory as buildsDir,
+    getConfigurationPathFor,
+    logLoadingTask,
+    packageBuildsDirectory,
     packageName,
-    packageRootDirectory,
-    packageTestsBundlesDirectory as bundlesDir,
-    tasksConfigurationsDirectory
+    packageTestsBundlesDirectory
 }                 from '../../_utils.mjs'
 
 const {
           red,
           green,
-          blue,
           magenta,
-          cyan
       } = colors
 
-const taskPath                  = relative( packageRootDirectory, import.meta.filename )
-const configurationPath         = join( tasksConfigurationsDirectory, 'tests', 'bundlings', 'check-bundling-from-esm-build-import.conf.mjs' )
-const relativeConfigurationPath = relative( packageRootDirectory, configurationPath )
+const configurationLocation = join( 'tests', 'bundlings', 'check-bundling-from-esm-build-import.conf.mjs' )
+const configurationPath     = getConfigurationPathFor( configurationLocation )
 
 const checkBundlingFromEsmBuildImportTask       = async ( done ) => {
 
-    const configuration = await getConfigurationFrom( configurationPath, [] )
+    const configuration = await getConfigurationFrom( configurationPath )
 
-    const buildFilePath = join( buildsDir, `${ packageName }.esm.js` )
+    const buildFilePath = join( packageBuildsDirectory, `${ packageName }.esm.js` )
     if ( !existsSync( buildFilePath ) ) {
         done( red( buildFilePath + ' does not exist' ) )
     }
 
-    const outputDir      = join( bundlesDir, 'from_build_import' )
-    const temporaryDir   = join( bundlesDir, 'from_build_import', '.tmp' )
-    const importDir      = relative( temporaryDir, buildsDir )
+    const outputDir      = join( packageTestsBundlesDirectory, 'from_build_import' )
+    const temporaryDir   = join( packageTestsBundlesDirectory, 'from_build_import', '.tmp' )
+    const importDir      = relative( temporaryDir, packageBuildsDirectory )
     const importFilePath = join( importDir, `${ packageName }.esm.js` )
 
     if ( existsSync( outputDir ) ) {
@@ -129,6 +126,6 @@ checkBundlingFromEsmBuildImportTask.displayName = 'check-bundling-from-esm-build
 checkBundlingFromEsmBuildImportTask.description = 'Verify that the project esm build is correctly importable in third party esm files'
 checkBundlingFromEsmBuildImportTask.flags       = null
 
-log( `Loading  ${ green( taskPath ) } with task ${ blue( checkBundlingFromEsmBuildImportTask.displayName ) } and configuration from ${ cyan( relativeConfigurationPath ) }` )
+logLoadingTask( import.meta.filename, checkBundlingFromEsmBuildImportTask, configurationPath )
 
 export { checkBundlingFromEsmBuildImportTask }

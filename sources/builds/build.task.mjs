@@ -1,32 +1,26 @@
 import colors     from 'ansi-colors'
 import log        from 'fancy-log'
-import {
-    join,
-    relative
-}                 from 'path'
+import { join }   from 'path'
 import { rollup } from 'rollup'
 import {
     getConfigurationFrom,
-    packageRootDirectory,
-    tasksConfigurationsDirectory
+    getConfigurationPathFor,
+    logLoadingTask
 }                 from '../_utils.mjs'
 
 const {
           red,
           green,
-          blue,
           yellow,
-          cyan
       } = colors
 
-const taskPath                  = relative( packageRootDirectory, import.meta.filename )
-const configurationPath         = join( tasksConfigurationsDirectory, 'builds', 'build.conf.mjs' )
-const relativeConfigurationPath = relative( packageRootDirectory, configurationPath )
-const configurations            = await getConfigurationFrom( configurationPath, [] )
+const configurationLocation = join( 'builds', 'build.conf.mjs' )
+const configurationPath     = getConfigurationPathFor( configurationLocation )
 
 const buildTask       = async ( done ) => {
 
-    for ( let config of configurations ) {
+    const configuration = await getConfigurationFrom( configurationPath )
+    for ( let config of configuration ) {
 
         if ( config === undefined || config === null || config.length === 0 ) {
             log( yellow( 'Empty configuration object... Skip it!' ) )
@@ -56,6 +50,6 @@ buildTask.displayName = 'build'
 buildTask.description = 'Todo...'
 buildTask.flags       = null
 
-log( `Loading  ${ green( taskPath ) } with task ${ blue( buildTask.displayName ) } and configuration from ${ cyan( relativeConfigurationPath ) }` )
+logLoadingTask( import.meta.filename, buildTask, configurationPath )
 
 export { buildTask }

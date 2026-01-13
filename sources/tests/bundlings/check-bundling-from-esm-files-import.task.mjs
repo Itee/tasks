@@ -15,26 +15,23 @@ import {
 import { rollup } from 'rollup'
 import {
     getConfigurationFrom,
-    packageRootDirectory,
+    getConfigurationPathFor,
+    logLoadingTask,
     packageSourcesDirectory as sourcesDir,
-    packageTestsBundlesDirectory as bundleDir,
-    tasksConfigurationsDirectory
+    packageTestsBundlesDirectory as bundleDir
 }                 from '../../_utils.mjs'
 
 const {
           red,
           green,
-          blue,
           magenta,
-          cyan
       } = colors
 
-const taskPath                  = relative( packageRootDirectory, import.meta.filename )
-const sourcesFilesPath          = join( tasksConfigurationsDirectory, 'tests', 'bundlings', 'check-bundling.conf.mjs' )
-const sourcesFiles              = await getConfigurationFrom( sourcesFilesPath, [] )
-const configurationPath         = join( tasksConfigurationsDirectory, 'tests', 'bundlings', 'check-bundling-from-esm-files-import.conf.mjs' )
-const relativeConfigurationPath = relative( packageRootDirectory, configurationPath )
-const configuration             = await getConfigurationFrom( configurationPath, [] )
+const sourcesFilesLocation = join( 'tests', 'bundlings', 'check-bundling.conf.mjs' )
+const sourcesFilesPath     = getConfigurationPathFor( sourcesFilesLocation )
+
+const configurationLocation = join( 'tests', 'bundlings', 'check-bundling-from-esm-files-import.conf.mjs' )
+const configurationPath     = getConfigurationPathFor( configurationLocation )
 
 const checkBundlingFromEsmFilesImportTask       = async ( done ) => {
 
@@ -45,6 +42,9 @@ const checkBundlingFromEsmFilesImportTask       = async ( done ) => {
         log( 'Clean up', magenta( outputDir ) )
         rmSync( outputDir, { recursive: true } )
     }
+
+    const sourcesFiles  = await getConfigurationFrom( sourcesFilesPath )
+    const configuration = await getConfigurationFrom( configurationPath )
 
     for ( let sourceFile of sourcesFiles ) {
 
@@ -101,6 +101,6 @@ checkBundlingFromEsmFilesImportTask.displayName = 'check-bundling-from-esm-files
 checkBundlingFromEsmFilesImportTask.description = 'In view to detect bundling side effects this task will create intermediary file for each individual export from this package and then create rollup config for each of them and bundle'
 checkBundlingFromEsmFilesImportTask.flags       = null
 
-log( `Loading  ${ green( taskPath ) } with task ${ blue( checkBundlingFromEsmFilesImportTask.displayName ) } and configuration from ${ cyan( relativeConfigurationPath ) }` )
+logLoadingTask( import.meta.filename, checkBundlingFromEsmFilesImportTask, configurationPath )
 
 export { checkBundlingFromEsmFilesImportTask }

@@ -1,14 +1,13 @@
-import colors       from 'ansi-colors'
-import log          from 'fancy-log'
-import { relative } from 'path'
+import colors from 'ansi-colors'
+import log    from 'fancy-log'
 import {
     getPrettyNodeVersion,
     getPrettyNpmVersion,
     getPrettyPackageName,
     getPrettyPackageVersion,
     Indenter,
-    packageRootDirectory
-}                   from '../_utils.mjs'
+    logLoadingTask
+}             from '../_utils.mjs'
 
 const {
           red,
@@ -150,6 +149,6 @@ helpTask.displayName = 'help'
 helpTask.description = 'Display the package help'
 helpTask.flags       = null
 
-log( 'Loading ', green( relative( packageRootDirectory, import.meta.filename ) ), `with task ${ blue( helpTask.displayName ) }` )
+logLoadingTask( import.meta.filename, helpTask )
 
 export { helpTask }

@@ -1,25 +1,25 @@
 import colors            from 'ansi-colors'
 import childProcess      from 'child_process'
 import log               from 'fancy-log'
-import {
-    existsSync,
-    mkdirSync,
-    readFileSync,
-    writeFileSync
-}                        from 'fs'
 import { glob }          from 'glob'
 import {
     parallel,
     series
 }                        from 'gulp'
 import {
+    existsSync,
+    mkdirSync,
+    readFileSync,
+    writeFileSync
+}                        from 'node:fs'
+import {
     dirname,
     extname,
     join,
     normalize,
     relative,
-}                        from 'path'
-import { fileURLToPath } from 'url'
+}                        from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const {
           red,
@@ -48,9 +48,34 @@ function getJsonFrom( path ) {
 
 }
 
-async function getConfigurationFrom( path, defaultConfiguration ) {
+function getConfigurationPathFor( configurationLocation ) {
 
-    let jsonData
+    const packageConfigurationPath = join( packageTasksConfigurationsDirectory, configurationLocation )
+    const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, configurationLocation )
+
+    let configurationPath
+
+    if ( existsSync( packageConfigurationPath ) ) {
+
+        configurationPath = packageConfigurationPath
+
+    } else if ( existsSync( defaultConfigurationPath ) ) {
+
+        configurationPath = defaultConfigurationPath
+
+    } else {
+
+        throw new Error( `Unable to find configuration for path ${ packageConfigurationPath } or ${ defaultConfigurationPath }` )
+
+    }
+
+    return configurationPath
+
+}
+
+async function getConfigurationFrom( path ) {
+
+    let jsonData = null
 
     try {
 
@@ -68,7 +93,6 @@ async function getConfigurationFrom( path, defaultConfiguration ) {
     } catch ( e ) {
 
         log( red( e ) )
-        jsonData = defaultConfiguration
 
     }
 
@@ -112,22 +136,28 @@ function getPackageRootDirectory() {
 
 }
 
-const packageRootDirectory            = getPackageRootDirectory()
-const packageJsonPath                 = join( packageRootDirectory, 'package.json' )
-const tasksDirectory                  = join( packageRootDirectory, '.tasks' )
-const tasksConfigurationsDirectory    = join( tasksDirectory, 'configs' )
-const nodeModulesDirectory            = join( packageRootDirectory, 'node_modules' )
-const packageBuildsDirectory          = join( packageRootDirectory, 'builds' )
-const packageSourcesDirectory         = join( packageRootDirectory, 'sources' )
-const packageSourcesBackendDirectory  = join( packageSourcesDirectory, 'backend' )
-const packageSourcesCommonDirectory   = join( packageSourcesDirectory, 'common' )
-const packageSourcesFrontendDirectory = join( packageSourcesDirectory, 'frontend' )
-const packageTestsDirectory           = join( packageRootDirectory, 'tests' )
-const packageTestsBenchmarksDirectory = join( packageTestsDirectory, 'benchmarks' )
-const packageTestsBundlesDirectory    = join( packageTestsDirectory, 'bundles' )
-const packageTestsUnitsDirectory      = join( packageTestsDirectory, 'units' )
-const packageDocsDirectory            = join( packageRootDirectory, 'docs' )
-const packageTutorialsDirectory       = join( packageRootDirectory, 'tutorials' )
+const iteePackageRootDirectory           = getPackageRootDirectory()
+const iteePackageJsonPath                = join( iteePackageRootDirectory, 'package.json' )
+const iteePackageConfigurationsDirectory = join( iteePackageRootDirectory, 'configs' )
+const iteePackageNodeModulesDirectory    = join( iteePackageRootDirectory, 'node_modules' )
+const iteePackageSourcesDirectory        = join( iteePackageRootDirectory, 'sources' )
+
+const packageRootDirectory                = iteePackageRootDirectory.includes('node_modules') ? join( iteePackageRootDirectory, '../../' ) : iteePackageRootDirectory
+const packageTasksDirectory               = join( packageRootDirectory, '.tasks' )
+const packageTasksConfigurationsDirectory = join( packageTasksDirectory, 'configs' )
+const packageNodeModulesDirectory         = join( packageRootDirectory, 'node_modules' )
+const packageBuildsDirectory              = join( packageRootDirectory, 'builds' )
+const packageSourcesDirectory             = join( packageRootDirectory, 'sources' )
+const packageSourcesBackendDirectory      = join( packageSourcesDirectory, 'backend' )
+const packageSourcesCommonDirectory       = join( packageSourcesDirectory, 'common' )
+const packageSourcesFrontendDirectory     = join( packageSourcesDirectory, 'frontend' )
+const packageTestsDirectory               = join( packageRootDirectory, 'tests' )
+const packageTestsBenchmarksDirectory     = join( packageTestsDirectory, 'benchmarks' )
+const packageTestsBundlesDirectory        = join( packageTestsDirectory, 'bundles' )
+const packageTestsUnitsDirectory          = join( packageTestsDirectory, 'units' )
+const packageDocsDirectory                = join( packageRootDirectory, 'docs' )
+const packageTutorialsDirectory           = join( packageRootDirectory, 'tutorials' )
+const packageJsonPath                     = join( packageRootDirectory, 'package.json' )
 
 ///
 
@@ -251,6 +281,25 @@ async function parallelizeTasksFrom( taskFiles = [] ) {
 
 ///
 
+function logLoadingTask( filename, task, configurationPath ) {
+
+    const taskPath = relative( packageRootDirectory, filename )
+
+    let logValue = `Loading  ${ green( taskPath ) } with task ${ blue( task.displayName ) }`
+
+    if ( configurationPath ) {
+
+        const relativeConfigurationPath = relative( packageRootDirectory, configurationPath )
+        logValue += ` and configuration from ${ cyan( relativeConfigurationPath ) }`
+
+    }
+
+    log( logValue )
+
+}
+
+///
+
 function IndenterFactory( indentationChar = '\t', indentationLevel = 5 ) {
 
     const indentationLevels = {}
@@ -295,12 +344,21 @@ class Indenter {
 export {
     createDirectoryIfNotExist,
     getJsonFrom,
+    getConfigurationPathFor,
     getConfigurationFrom,
     createFile,
     getFilesFrom,
 
+    iteePackageRootDirectory,
+    iteePackageJsonPath,
+    iteePackageConfigurationsDirectory,
+    iteePackageNodeModulesDirectory,
+    iteePackageSourcesDirectory,
+
     packageRootDirectory,
-    packageJsonPath,
+    packageTasksDirectory,
+    packageTasksConfigurationsDirectory,
+    packageNodeModulesDirectory,
     packageBuildsDirectory,
     packageSourcesDirectory,
     packageSourcesBackendDirectory,
@@ -312,10 +370,7 @@ export {
     packageTestsUnitsDirectory,
     packageDocsDirectory,
     packageTutorialsDirectory,
-    tasksDirectory,
-    tasksConfigurationsDirectory,
-    nodeModulesDirectory,
-
+    packageJsonPath,
     packageJson,
     packageName,
     packageVersion,
@@ -328,6 +383,7 @@ export {
     getTasksFrom,
     serializeTasksFrom,
     parallelizeTasksFrom,
+    logLoadingTask,
 
     IndenterFactory as Indenter
 }

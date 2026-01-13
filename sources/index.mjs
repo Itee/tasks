@@ -3,7 +3,6 @@ export { cleanTask }                           from './cleans/clean.task.mjs'
 export { docTask }                             from './docs/doc.task.mjs'
 export { helpTask }                            from './helps/help.task.mjs'
 export { lintTask }                            from './lints/lint.task.mjs'
-export { patchTask }                           from './patches/patch.task.mjs'
 export { releaseTask }                         from './releases/release.task.mjs'
 export { runTestsTask }                        from './tests/run-tests.task.mjs'
 export { computeUnitTestsTask }                from './tests/units/compute-unit-tests.task.mjs'
@@ -19,3 +18,4 @@ export { runBenchmarksTestsTask }              from './tests/benchmarks/run-benc
 export { runBenchmarksForBackendTask }         from './tests/benchmarks/run-benchmarks-for-backend.task.mjs'
 export { runBenchmarksForFrontendTask }        from './tests/benchmarks/run-benchmarks-for-frontend.task.mjs'
 
+export * from './_utils.mjs'

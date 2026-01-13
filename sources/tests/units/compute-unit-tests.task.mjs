@@ -13,26 +13,23 @@ import {
     createDirectoryIfNotExist,
     createFile,
     getConfigurationFrom,
+    getConfigurationPathFor,
     getPrettyPackageName,
     Indenter,
-    nodeModulesDirectory,
+    logLoadingTask,
     packageName,
-    packageRootDirectory,
+    packageNodeModulesDirectory,
     packageSourcesDirectory as sourcesDir,
-    packageTestsUnitsDirectory as unitsDir,
-    tasksConfigurationsDirectory
+    packageTestsUnitsDirectory as unitsDir
 }                          from '../../_utils.mjs'
 
-const taskPath                  = relative( packageRootDirectory, import.meta.filename )
-const configurationPath         = join( tasksConfigurationsDirectory, 'tests', 'units', 'compute-unit-tests.conf.mjs' )
-const relativeConfigurationPath = relative( packageRootDirectory, configurationPath )
-const configuration             = await getConfigurationFrom( configurationPath, [] )
+const configurationLocation = join( 'tests', 'units', 'compute-unit-tests.conf.mjs' )
+const configurationPath     = getConfigurationPathFor( configurationLocation )
+const configuration         = await getConfigurationFrom( configurationPath )
 
 const {
           red,
-          green,
-          blue,
-          yellow
+          yellow,
       } = colors
 
 /**
@@ -60,7 +57,7 @@ const computeUnitTestsTask       = ( done ) => {
 
         try {
 
-            const jsdocPath   = join( nodeModulesDirectory, '/jsdoc/jsdoc.js' )
+            const jsdocPath   = join( packageNodeModulesDirectory, '/jsdoc/jsdoc.js' )
             const jsdocOutput = childProcess.execFileSync( 'node', [ jsdocPath, '-X', sourceFile ] ).toString()
 
             const classNames    = []
@@ -533,6 +530,6 @@ computeUnitTestsTask.displayName = 'compute-unit-tests'
 computeUnitTestsTask.description = 'Will generate unit test files from source code using type inference from comments'
 computeUnitTestsTask.flags       = null
 
-log( `Loading  ${ green( taskPath ) } with task ${ blue( computeUnitTestsTask.displayName ) } and configuration from ${ cyan( relativeConfigurationPath ) }` )
+logLoadingTask( import.meta.filename, computeUnitTestsTask, configurationPath )
 
 export { computeUnitTestsTask }

@@ -1,20 +1,15 @@
 import colors         from 'ansi-colors'
 import log            from 'fancy-log'
 import { existsSync } from 'fs'
+import { join }       from 'path'
 import {
-    join,
-    relative
-}                     from 'path'
-import {
+    logLoadingTask,
     packageName,
-    packageRootDirectory,
     packageTestsBenchmarksDirectory
-} from '../../_utils.mjs'
+}                     from '../../_utils.mjs'
 
 const {
           red,
-          green,
-          blue,
           yellow
       } = colors
 
@@ -42,6 +37,6 @@ runBenchmarksForBackendTask.displayName = 'run-benchmarks-for-backend'
 runBenchmarksForBackendTask.description = 'Will run benchmarks with node'
 runBenchmarksForBackendTask.flags       = null
 
-log( 'Loading ', green( relative( packageRootDirectory, import.meta.filename ) ), `with task ${ blue( runBenchmarksForBackendTask.displayName ) }` )
+logLoadingTask( import.meta.filename, runBenchmarksForBackendTask )
 
 export { runBenchmarksForBackendTask }
