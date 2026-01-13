@@ -1,3 +1,8 @@
+# [v1.0.1](https://github.com/Itee/itee-tasks/compare/v1.0.0...v1.0.1) (2026-01-13)
+
+## 🐛 Bug Fixes
+- [`7caa5dc`](https://github.com/Itee/itee-tasks/commit/7caa5dc)  (package) apply npm pkg fix
+
 # v1.0.0 (2026-01-13)
 
 ## ✨ New Features
