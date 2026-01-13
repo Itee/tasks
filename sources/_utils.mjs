@@ -142,7 +142,7 @@ const iteePackageConfigurationsDirectory = join( iteePackageRootDirectory, 'conf
 const iteePackageNodeModulesDirectory    = join( iteePackageRootDirectory, 'node_modules' )
 const iteePackageSourcesDirectory        = join( iteePackageRootDirectory, 'sources' )
 
-const packageRootDirectory                = join( iteePackageRootDirectory, '../../' )
+const packageRootDirectory                = iteePackageRootDirectory.includes('node_modules') ? join( iteePackageRootDirectory, '../../' ) : iteePackageRootDirectory
 const packageTasksDirectory               = join( packageRootDirectory, '.tasks' )
 const packageTasksConfigurationsDirectory = join( packageTasksDirectory, 'configs' )
 const packageNodeModulesDirectory         = join( packageRootDirectory, 'node_modules' )

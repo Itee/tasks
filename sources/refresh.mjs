@@ -10,6 +10,7 @@ import {
     getConfigurationFrom,
     getConfigurationPathFor,
     getFilesFrom,
+    iteePackageRootDirectory,
     iteePackageSourcesDirectory,
     packageNodeModulesDirectory,
     packageRootDirectory,
@@ -68,8 +69,20 @@ let gulpfileContent = '' +
 // Generate default tasks exports and append to gulpfile content
 gulpfileContent += '// Default Itee tasks\n'
 for ( const taskFile of defaultTaskFiles ) {
-    const relativeTaskFile = relative( packageNodeModulesDirectory, taskFile )
-    gulpfileContent += `export * from '${ relativeTaskFile }'\n`
+
+    // we are calling from client and use relative path from it
+    if ( iteePackageRootDirectory.includes( 'node_modules' ) ) {
+
+        const relativeTaskFile = relative( packageNodeModulesDirectory, taskFile )
+        gulpfileContent += `export * from '${ relativeTaskFile }'\n`
+
+    } else { // we are refreshing itee-tasks package internally
+
+        const relativeTaskFile = relative( iteePackageRootDirectory, taskFile )
+        gulpfileContent += `export * from './${ relativeTaskFile }'\n`
+
+    }
+
 }
 
 gulpfileContent += '\n'
