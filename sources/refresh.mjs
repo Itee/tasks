@@ -10,60 +10,48 @@ import {
     getConfigurationFrom,
     getConfigurationPathFor,
     getFilesFrom,
-    iteePackageConfigurationsDirectory,
+    iteePackageSourcesDirectory,
+    packageNodeModulesDirectory,
     packageRootDirectory,
-    packageTasksConfigurationsDirectory
-} from './_utils.mjs'
+    packageTasksDirectory
+}                        from './_utils.mjs'
 
 const {
           green,
           yellow
       } = colors
 
-const configurationPath     = getConfigurationPathFor( 'refresh.conf.mjs' )
-const configuration         = await getConfigurationFrom( configurationPath )
+const configurationPath = getConfigurationPathFor( 'refresh.conf.mjs' )
+const configuration     = await getConfigurationFrom( configurationPath )
 
 // Get and filter tasks to expose
-const defaultTaskFiles = [
-    'buildTask',
-    'cleanTask',
-    'docTask',
-    'helpTask',
-    'lintTask',
-    'releaseTask',
-    'runTestsTask',
-    'computeUnitTestsTask',
-    'runUnitTestsTask',
-    'runUnitTestsForBackendTask',
-    'runUnitTestsForFrontendTask',
-    'checkBundlingFromEsmBuildImportTask',
-    'checkBundlingFromEsmFilesDirectTask',
-    'checkBundlingFromEsmFilesImportTask',
-    'checkBundlingTask',
-    'computeBenchmarksTask',
-    'runBenchmarksTestsTask',
-    'runBenchmarksForBackendTask',
-    'runBenchmarksForFrontendTask',
-].filter( taskName => {
-    const included = !configuration.includes( taskName )
+const defaultTaskPattern = join( iteePackageSourcesDirectory, '/{*.task.mjs,**/*.task.mjs,**/**/*.task.mjs}' )
+const defaultTaskFiles   = getFilesFrom(
+    defaultTaskPattern,
+    filePath => {
+        const relativeFilepath = relative( iteePackageSourcesDirectory, filePath )
+        const filename         = basename( filePath )
+        const included         = !configuration.includes( filename )
 
-    included
-    ? log( 'Include default', green( taskName ) )
-    : log( 'Exclude default', yellow( taskName ) )
+        included
+        ? log( 'Include default task from', green( relativeFilepath ) )
+        : log( 'Exclude default task from', yellow( relativeFilepath ) )
 
-    return included
-} )
+        return included
+    }
+)
 
-const userTaskFiles = getFilesFrom(
-    join( packageRootDirectory, '.tasks/{.*.task.mjs,*.task.mjs,.**/*.task.mjs,.**/**/*.task.mjs}' ),
+const userTaskPattern = join( packageTasksDirectory, '/{*.task.mjs,**/*.task.mjs,**/**/*.task.mjs}' )
+const userTaskFiles   = getFilesFrom(
+    userTaskPattern,
     filePath => {
         const relativeFilepath = relative( packageRootDirectory, filePath )
         const filename         = basename( filePath )
         const included         = !configuration.includes( filename )
 
         included
-        ? log( 'Include', green( relativeFilepath ) )
-        : log( 'Exclude', yellow( relativeFilepath ) )
+        ? log( 'Include user task from', green( relativeFilepath ) )
+        : log( 'Exclude user task from', yellow( relativeFilepath ) )
 
         return included
     }
@@ -79,8 +67,9 @@ let gulpfileContent = '' +
 
 // Generate default tasks exports and append to gulpfile content
 gulpfileContent += '// Default Itee tasks\n'
-for ( const taskName of defaultTaskFiles ) {
-    gulpfileContent += `export { ${ taskName } } from 'itee-tasks'\n`
+for ( const taskFile of defaultTaskFiles ) {
+    const relativeTaskFile = relative( packageNodeModulesDirectory, taskFile )
+    gulpfileContent += `export * from '${ relativeTaskFile }'\n`
 }
 
 gulpfileContent += '\n'
