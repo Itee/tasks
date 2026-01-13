@@ -17,9 +17,9 @@ import {
     getConfigurationFrom,
     getConfigurationPathFor,
     logLoadingTask,
-    packageBuildsDirectory as buildsDir,
+    packageBuildsDirectory,
     packageName,
-    packageTestsBundlesDirectory as bundlesDir
+    packageTestsBundlesDirectory
 }                 from '../../_utils.mjs'
 
 const {
@@ -35,14 +35,14 @@ const checkBundlingFromEsmBuildImportTask       = async ( done ) => {
 
     const configuration = await getConfigurationFrom( configurationPath )
 
-    const buildFilePath = join( buildsDir, `${ packageName }.esm.js` )
+    const buildFilePath = join( packageBuildsDirectory, `${ packageName }.esm.js` )
     if ( !existsSync( buildFilePath ) ) {
         done( red( buildFilePath + ' does not exist' ) )
     }
 
-    const outputDir      = join( bundlesDir, 'from_build_import' )
-    const temporaryDir   = join( bundlesDir, 'from_build_import', '.tmp' )
-    const importDir      = relative( temporaryDir, buildsDir )
+    const outputDir      = join( packageTestsBundlesDirectory, 'from_build_import' )
+    const temporaryDir   = join( packageTestsBundlesDirectory, 'from_build_import', '.tmp' )
+    const importDir      = relative( temporaryDir, packageBuildsDirectory )
     const importFilePath = join( importDir, `${ packageName }.esm.js` )
 
     if ( existsSync( outputDir ) ) {
