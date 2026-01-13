@@ -28,7 +28,6 @@
     "default": "gulp --tasks",
     "refresh": "node ./sources/refresh.mjs",
     "help": "gulp help",
-    "patch": "gulp patch",
     "clean": "gulp clean",
     "lint": "gulp lint",
     "doc": "gulp doc",
