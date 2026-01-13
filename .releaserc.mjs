@@ -84,7 +84,11 @@ function getCIConfig() {
     return {
         branch:  'master',
         plugins: [
-            getGitmojiPlugin(), getChangelogPlugin(), getNpmPlugin(), getGithubPlugin(), getGitPlugin()
+            getGitmojiPlugin(),
+            getChangelogPlugin(),
+            getNpmPlugin(),
+            // getGithubPlugin(),
+            getGitPlugin()
         ]
     }
 }
