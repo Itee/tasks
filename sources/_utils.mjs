@@ -64,32 +64,48 @@ function getTaskConfigurationPathFor( filename ) {
         '.conf.js',
         '.conf.mjs',
     ]
-    const configurationPaths = []
+
+    const packageConfigurationPaths = []
+    const defaultConfigurationPaths = []
 
     for ( const replaceValue of replaceValues ) {
         const configurationLocation    = relativeTaskPath.replace( searchValue, replaceValue )
         const packageConfigurationPath = join( packageTasksConfigurationsDirectory, configurationLocation )
         const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, configurationLocation )
 
-        configurationPaths.push(
-            packageConfigurationPath,
-            defaultConfigurationPath
-        )
+        packageConfigurationPaths.push(packageConfigurationPath)
+        defaultConfigurationPaths.push(defaultConfigurationPath)
     }
 
-    // Looking for existing configuration file (care the user defined must be searched before the default !)
     let configurationPath
-    for ( const currentConfigurationPath of configurationPaths ) {
 
-        if ( existsSync( currentConfigurationPath ) ) {
-            configurationPath = currentConfigurationPath
+    // Looking for package existing configuration file first
+    for ( const packageConfigurationPath of packageConfigurationPaths ) {
+
+        if ( existsSync( packageConfigurationPath ) ) {
+            configurationPath = packageConfigurationPath
             break
         }
 
     }
 
+    // Then search for default if not found
     if ( !configurationPath ) {
-        throw new Error( `Unable to find configuration in paths ${ configurationPaths.join( ', ' ) }.` )
+
+        for ( const defaultConfigurationPath of defaultConfigurationPaths ) {
+
+            if ( existsSync( defaultConfigurationPath ) ) {
+                configurationPath = defaultConfigurationPath
+                break
+            }
+
+        }
+
+    }
+
+    // Else throw an error
+    if ( !configurationPath ) {
+        throw new Error( `Unable to find configuration in package configuration paths ${ packageConfigurationPaths.join( ', ' ) } nor in default configuration paths ${ defaultConfigurationPaths.join( ', ' ) }.` )
     }
 
     return configurationPath
