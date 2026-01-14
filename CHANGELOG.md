@@ -1,3 +1,8 @@
+# [v1.0.8](https://github.com/Itee/itee-tasks/compare/v1.0.7...v1.0.8) (2026-01-14)
+
+## 🐛 Bug Fixes
+- [`5b4e026`](https://github.com/Itee/itee-tasks/commit/5b4e026)  (utils) fix management of task file that does not contain .task in their filename
+
 # [v1.0.7](https://github.com/Itee/itee-tasks/compare/v1.0.6...v1.0.7) (2026-01-14)
 
 ## 🐛 Bug Fixes
