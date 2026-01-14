@@ -1,12 +1,13 @@
 import colors     from 'ansi-colors'
 import log        from 'fancy-log'
-import { join }   from 'path'
+import { basename } from 'node:path'
 import { rollup } from 'rollup'
 import {
-    getConfigurationFrom,
-    getConfigurationPathFor,
+    getTaskConfigurationFor,
     logLoadingTask
 }                 from '../_utils.mjs'
+
+logLoadingTask( import.meta.filename )
 
 const {
           red,
@@ -14,12 +15,10 @@ const {
           yellow,
       } = colors
 
-const configurationLocation = join( 'builds', 'build.conf.mjs' )
-const configurationPath     = getConfigurationPathFor( configurationLocation )
-
 const buildTask       = async ( done ) => {
 
-    const configuration = await getConfigurationFrom( configurationPath )
+    const configuration = await getTaskConfigurationFor( import.meta.filename )
+
     for ( let config of configuration ) {
 
         if ( config === undefined || config === null || config.length === 0 ) {
@@ -46,10 +45,8 @@ const buildTask       = async ( done ) => {
     done()
 
 }
-buildTask.displayName = 'build'
+buildTask.displayName = basename( import.meta.filename, '.task.mjs' )
 buildTask.description = 'Todo...'
 buildTask.flags       = null
-
-logLoadingTask( import.meta.filename, buildTask, configurationPath )
 
 export { buildTask }

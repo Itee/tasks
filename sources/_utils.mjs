@@ -13,6 +13,7 @@ import {
     writeFileSync
 }                        from 'node:fs'
 import {
+    basename,
     dirname,
     extname,
     join,
@@ -48,8 +49,14 @@ function getJsonFrom( path ) {
 
 }
 
-function getConfigurationPathFor( configurationLocation ) {
+function getTaskConfigurationPathFor( filename ) {
 
+    // Get relative path of the task between internal or user defined
+    let relativeTaskPath = filename.includes( iteePackageSourcesDirectory )
+                           ? relative( iteePackageSourcesDirectory, filename )
+                           : relative( packageTasksDirectory, filename )
+
+    const configurationLocation    = relativeTaskPath.replace( '.task', '.conf' )
     const packageConfigurationPath = join( packageTasksConfigurationsDirectory, configurationLocation )
     const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, configurationLocation )
 
@@ -73,20 +80,24 @@ function getConfigurationPathFor( configurationLocation ) {
 
 }
 
-async function getConfigurationFrom( path ) {
+async function getTaskConfigurationFor( filename ) {
 
-    let jsonData = null
+    const configurationFilePath = getTaskConfigurationPathFor( filename )
+
+    log( `Loading configuration from ${ cyan( configurationFilePath ) }` )
+
+    let configuration = null
 
     try {
 
-        if ( extname( path ) !== '.json' ) {
+        if ( extname( configurationFilePath ) === '.json' ) {
 
-            const moduleData = await import(path)
-            jsonData         = moduleData.default
+            configuration = getJsonFrom( configurationFilePath )
 
         } else {
 
-            jsonData = getJsonFrom( path )
+            const moduleData = await import( configurationFilePath )
+            configuration    = moduleData.default
 
         }
 
@@ -96,7 +107,7 @@ async function getConfigurationFrom( path ) {
 
     }
 
-    return jsonData
+    return configuration
 
 }
 
@@ -142,7 +153,7 @@ const iteePackageConfigurationsDirectory = join( iteePackageRootDirectory, 'conf
 const iteePackageNodeModulesDirectory    = join( iteePackageRootDirectory, 'node_modules' )
 const iteePackageSourcesDirectory        = join( iteePackageRootDirectory, 'sources' )
 
-const packageRootDirectory                = iteePackageRootDirectory.includes('node_modules') ? join( iteePackageRootDirectory, '../../' ) : iteePackageRootDirectory
+const packageRootDirectory                = iteePackageRootDirectory.includes( 'node_modules' ) ? join( iteePackageRootDirectory, '../../' ) : iteePackageRootDirectory
 const packageTasksDirectory               = join( packageRootDirectory, '.tasks' )
 const packageTasksConfigurationsDirectory = join( packageTasksDirectory, 'configs' )
 const packageNodeModulesDirectory         = join( packageRootDirectory, 'node_modules' )
@@ -281,20 +292,12 @@ async function parallelizeTasksFrom( taskFiles = [] ) {
 
 ///
 
-function logLoadingTask( filename, task, configurationPath ) {
+function logLoadingTask( filename ) {
 
     const taskPath = relative( packageRootDirectory, filename )
+    const taskName = basename( filename, '.task.mjs' )
 
-    let logValue = `Loading  ${ green( taskPath ) } with task ${ blue( task.displayName ) }`
-
-    if ( configurationPath ) {
-
-        const relativeConfigurationPath = relative( packageRootDirectory, configurationPath )
-        logValue += ` and configuration from ${ cyan( relativeConfigurationPath ) }`
-
-    }
-
-    log( logValue )
+    log( `Loading  ${ green( taskPath ) } with task ${ blue( taskName ) }` )
 
 }
 
@@ -344,8 +347,8 @@ class Indenter {
 export {
     createDirectoryIfNotExist,
     getJsonFrom,
-    getConfigurationPathFor,
-    getConfigurationFrom,
+    getTaskConfigurationPathFor,
+    getTaskConfigurationFor,
     createFile,
     getFilesFrom,
 

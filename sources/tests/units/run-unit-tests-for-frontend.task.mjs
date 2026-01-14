@@ -1,16 +1,14 @@
 import { startTestRunner } from '@web/test-runner'
 import colors              from 'ansi-colors'
-import { join }            from 'path'
+import { basename }        from 'node:path'
 import {
-    getConfigurationFrom,
-    getConfigurationPathFor,
+    getTaskConfigurationFor,
     logLoadingTask
 }                          from '../../_utils.mjs'
 
-const { red } = colors
+logLoadingTask( import.meta.filename )
 
-const configurationLocation = join( 'tests', 'units', 'run-unit-tests-for-frontend.conf.mjs' )
-const configurationPath     = getConfigurationPathFor( configurationLocation )
+const { red } = colors
 
 /**
  * @description Will run unit tests with web-test-runner
@@ -18,7 +16,7 @@ const configurationPath     = getConfigurationPathFor( configurationLocation )
 const runUnitTestsForFrontendTask       = () => {
     return new Promise( async ( resolve, reject ) => {
 
-        const configuration = await getConfigurationFrom( configurationPath )
+        const configuration = await getTaskConfigurationFor( import.meta.filename )
         const testRunner    = await startTestRunner( {
             config:          configuration,
             readCliArgs:     false,
@@ -43,10 +41,8 @@ const runUnitTestsForFrontendTask       = () => {
 
     } )
 }
-runUnitTestsForFrontendTask.displayName = 'run-unit-tests-for-frontend'
+runUnitTestsForFrontendTask.displayName = basename( import.meta.filename, '.task.mjs' )
 runUnitTestsForFrontendTask.description = 'Will run unit tests with web-test-runner'
 runUnitTestsForFrontendTask.flags       = null
-
-logLoadingTask( import.meta.filename, runUnitTestsForFrontendTask, configurationPath )
 
 export { runUnitTestsForFrontendTask }

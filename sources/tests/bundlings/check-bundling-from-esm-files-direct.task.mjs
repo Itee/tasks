@@ -11,24 +11,22 @@ import {
     extname,
     join,
     normalize
-} from 'path'
+}                 from 'path'
 import { rollup } from 'rollup'
 import {
-    getConfigurationFrom,
-    getConfigurationPathFor,
+    getTaskConfigurationFor,
     logLoadingTask,
     packageSourcesDirectory,
     packageTestsBundlesDirectory
 }                 from '../../_utils.mjs'
+
+logLoadingTask( import.meta.filename )
 
 const {
           red,
           green,
           magenta,
       } = colors
-
-const configurationLocation = join( 'tests', 'bundlings', 'check-bundling-from-esm-files-direct.conf.mjs' )
-const configurationPath     = getConfigurationPathFor( configurationLocation )
 
 /**
  * @description In view to detect bundling side effects this task will
@@ -44,7 +42,7 @@ const checkBundlingFromEsmFilesDirectTask       = async ( done ) => {
         rmSync( outputDir, { recursive: true } )
     }
 
-    const configuration = await getConfigurationFrom( configurationPath )
+    const configuration = await getTaskConfigurationFor( import.meta.filename )
 
     // Get source files to process
     const pattern     = join( packageSourcesDirectory, '**' )
@@ -89,10 +87,8 @@ const checkBundlingFromEsmFilesDirectTask       = async ( done ) => {
     done()
 
 }
-checkBundlingFromEsmFilesDirectTask.displayName = 'check-bundling-from-esm-files-direct'
+checkBundlingFromEsmFilesDirectTask.displayName = basename( import.meta.filename, '.task.mjs' )
 checkBundlingFromEsmFilesDirectTask.description = 'In view to detect bundling side effects this task will create intermediary file for each individual export from this package and then create rollup config for each of them and bundle'
 checkBundlingFromEsmFilesDirectTask.flags       = null
-
-logLoadingTask( import.meta.filename, checkBundlingFromEsmFilesDirectTask, configurationPath )
 
 export { checkBundlingFromEsmFilesDirectTask }

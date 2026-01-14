@@ -1,5 +1,6 @@
 import colors from 'ansi-colors'
 import log    from 'fancy-log'
+import { basename } from 'node:path'
 import {
     getPrettyNodeVersion,
     getPrettyNpmVersion,
@@ -8,6 +9,8 @@ import {
     Indenter,
     logLoadingTask
 }             from '../_utils.mjs'
+
+logLoadingTask( import.meta.filename )
 
 const {
           red,
@@ -145,10 +148,8 @@ const helpTask       = ( done ) => {
     done()
 
 }
-helpTask.displayName = 'help'
+helpTask.displayName = basename( import.meta.filename, '.task.mjs' )
 helpTask.description = 'Display the package help'
 helpTask.flags       = null
-
-logLoadingTask( import.meta.filename, helpTask )
 
 export { helpTask }

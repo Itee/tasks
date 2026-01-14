@@ -14,13 +14,14 @@ import {
 }                 from 'path'
 import { rollup } from 'rollup'
 import {
-    getConfigurationFrom,
-    getConfigurationPathFor,
+    getTaskConfigurationFor,
     logLoadingTask,
     packageBuildsDirectory,
     packageName,
     packageTestsBundlesDirectory
 }                 from '../../_utils.mjs'
+
+logLoadingTask( import.meta.filename )
 
 const {
           red,
@@ -28,12 +29,9 @@ const {
           magenta,
       } = colors
 
-const configurationLocation = join( 'tests', 'bundlings', 'check-bundling-from-esm-build-import.conf.mjs' )
-const configurationPath     = getConfigurationPathFor( configurationLocation )
-
 const checkBundlingFromEsmBuildImportTask       = async ( done ) => {
 
-    const configuration = await getConfigurationFrom( configurationPath )
+    const configuration = await getTaskConfigurationFor( import.meta.filename )
 
     const buildFilePath = join( packageBuildsDirectory, `${ packageName }.esm.js` )
     if ( !existsSync( buildFilePath ) ) {
@@ -122,10 +120,8 @@ const checkBundlingFromEsmBuildImportTask       = async ( done ) => {
     }
 
 }
-checkBundlingFromEsmBuildImportTask.displayName = 'check-bundling-from-esm-build-import'
+checkBundlingFromEsmBuildImportTask.displayName = basename( import.meta.filename, '.task.mjs' )
 checkBundlingFromEsmBuildImportTask.description = 'Verify that the project esm build is correctly importable in third party esm files'
 checkBundlingFromEsmBuildImportTask.flags       = null
-
-logLoadingTask( import.meta.filename, checkBundlingFromEsmBuildImportTask, configurationPath )
 
 export { checkBundlingFromEsmBuildImportTask }
