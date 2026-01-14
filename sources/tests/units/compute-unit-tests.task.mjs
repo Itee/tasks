@@ -1,14 +1,16 @@
 import colors              from 'ansi-colors'
 import childProcess        from 'child_process'
 import log                 from 'fancy-log'
+import { glob }            from 'glob'
 import { isNotEmptyArray } from 'itee-validators'
 import {
     basename,
     dirname,
     extname,
     join,
+    normalize,
     relative
-}                          from 'path'
+} from 'path'
 import {
     createDirectoryIfNotExist,
     createFile,
@@ -19,9 +21,9 @@ import {
     logLoadingTask,
     packageName,
     packageNodeModulesDirectory,
-    packageSourcesDirectory as sourcesDir,
-    packageTestsUnitsDirectory as unitsDir
-}                          from '../../_utils.mjs'
+    packageSourcesDirectory,
+    packageTestsUnitsDirectory
+} from '../../_utils.mjs'
 
 const configurationLocation = join( 'tests', 'units', 'compute-unit-tests.conf.mjs' )
 const configurationPath     = getConfigurationPathFor( configurationLocation )
@@ -37,22 +39,37 @@ const {
  */
 const computeUnitTestsTask       = ( done ) => {
 
-    createDirectoryIfNotExist( unitsDir )
+    createDirectoryIfNotExist( packageTestsUnitsDirectory )
+
+    // Get task configuration
+    const filePathsToIgnore = configuration
+
+    // Get source files to process
+    const pattern = join( packageSourcesDirectory, '**' )
+    const sourceFiles = glob.sync( pattern )
+                            .map( filePath => normalize( filePath ) )
+                            .filter( filePath => {
+                                const fileName         = basename( filePath )
+                                const isJsFile         = fileName.endsWith( '.js' )
+                                const isNotPrivateFile = !fileName.startsWith( '_' )
+                                const isNotIgnoredFile = !filePathsToIgnore.includes( fileName )
+                                return isJsFile && isNotPrivateFile && isNotIgnoredFile
+                            } )
 
     const unitsImportMap = []
-    for ( let sourceFile of configuration ) {
+    for ( let sourceFile of sourceFiles ) {
 
-        const specificFilePath = sourceFile.replace( sourcesDir, '' )
+        const specificFilePath = sourceFile.replace( packageSourcesDirectory, '' )
         const specificDir      = dirname( specificFilePath )
 
         const fileName     = basename( sourceFile, extname( sourceFile ) )
         const unitFileName = `${ fileName }.unit.mjs`
-        const unitDirPath  = join( unitsDir, specificDir )
+        const unitDirPath  = join( packageTestsUnitsDirectory, specificDir )
         const unitFilePath = join( unitDirPath, unitFileName )
 
         const nsName         = `${ fileName }Namespace`
         const unitName       = `${ fileName }Units`
-        const importDirPath  = relative( unitDirPath, sourcesDir )
+        const importDirPath  = relative( unitDirPath, packageSourcesDirectory )
         const importFilePath = join( importDirPath, specificFilePath ).replace( /\\/g, '/' )
 
         try {
@@ -477,7 +494,7 @@ const computeUnitTestsTask       = ( done ) => {
                 '' +
                 `} )` + '\n'
 
-            const importUnitFilePath = relative( unitsDir, unitFilePath )
+            const importUnitFilePath = relative( packageTestsUnitsDirectory, unitFilePath )
             unitsImportMap.push( {
                 exportName: unitName,
                 path:       importUnitFilePath.replace( /\\/g, '/' )
@@ -509,7 +526,7 @@ const computeUnitTestsTask       = ( done ) => {
     } else {
 
         log( 'Warning ', yellow( 'No tests were generated. Create fallback global root import file.' ) )
-        const defaultUnitsDir  = join( unitsDir, 'default' )
+        const defaultUnitsDir  = join( packageTestsUnitsDirectory, 'default' )
         const defaultUnitsPath = join( defaultUnitsDir, 'default.unit.mjs' )
 
         createDirectoryIfNotExist( defaultUnitsDir )
@@ -520,7 +537,7 @@ const computeUnitTestsTask       = ( done ) => {
 
     }
 
-    const unitsFilePath = join( unitsDir, `${ packageName }.units.mjs` )
+    const unitsFilePath = join( packageTestsUnitsDirectory, `${ packageName }.units.mjs` )
     createFile( unitsFilePath, unitsTemplate )
 
     done()

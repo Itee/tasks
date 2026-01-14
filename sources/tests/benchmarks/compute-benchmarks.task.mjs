@@ -1,11 +1,13 @@
 import colors       from 'ansi-colors'
 import childProcess from 'child_process'
 import log          from 'fancy-log'
+import { glob }     from 'glob/dist/esm/index.d.ts'
 import {
     basename,
     dirname,
     extname,
     join,
+    normalize,
     relative
 }                   from 'path'
 import {
@@ -16,8 +18,8 @@ import {
     logLoadingTask,
     packageName,
     packageNodeModulesDirectory,
-    packageSourcesDirectory as sourcesDir,
-    packageTestsBenchmarksDirectory as benchesDir,
+    packageSourcesDirectory,
+    packageTestsBenchmarksDirectory,
     packageTestsDirectory
 }                   from '../../_utils.mjs'
 
@@ -35,21 +37,36 @@ const configuration         = await getConfigurationFrom( configurationPath )
  */
 const computeBenchmarksTask       = ( done ) => {
 
-    createDirectoryIfNotExist( benchesDir )
+    createDirectoryIfNotExist( packageTestsBenchmarksDirectory )
+
+    // Get task configuration
+    const filePathsToIgnore = configuration
+
+    // Get source files to process
+    const pattern     = join( packageSourcesDirectory, '**' )
+    const sourceFiles = glob.sync( pattern )
+                            .map( filePath => normalize( filePath ) )
+                            .filter( filePath => {
+                                const fileName         = basename( filePath )
+                                const isJsFile         = fileName.endsWith( '.js' )
+                                const isNotPrivateFile = !fileName.startsWith( '_' )
+                                const isNotIgnoredFile = !filePathsToIgnore.includes( fileName )
+                                return isJsFile && isNotPrivateFile && isNotIgnoredFile
+                            } )
 
     const benchRootImports = []
-    for ( let sourceFile of configuration ) {
+    for ( let sourceFile of sourceFiles ) {
 
-        const specificFilePath = sourceFile.replace( sourcesDir, '' )
+        const specificFilePath = sourceFile.replace( packageSourcesDirectory, '' )
         const specificDir      = dirname( specificFilePath )
 
         const fileName      = basename( sourceFile, extname( sourceFile ) )
         const benchFileName = `${ fileName }.bench.js`
-        const benchDirPath  = join( benchesDir, specificDir )
+        const benchDirPath  = join( packageTestsBenchmarksDirectory, specificDir )
         const benchFilePath = join( benchDirPath, benchFileName )
 
         const nsName         = `${ fileName }Namespace`
-        const importDirPath  = relative( benchDirPath, sourcesDir )
+        const importDirPath  = relative( benchDirPath, packageSourcesDirectory )
         const importFilePath = join( importDirPath, specificFilePath ).replace( /\\/g, '/' )
 
         try {
@@ -159,7 +176,7 @@ const computeBenchmarksTask       = ( done ) => {
                 `export { ${ suitesToExports } }` + '\n' +
                 '\n'
 
-            const importBenchFilePath = relative( benchesDir, benchFilePath ).replace( /\\/g, '/' )
+            const importBenchFilePath = relative( packageTestsBenchmarksDirectory, benchFilePath ).replace( /\\/g, '/' )
             benchRootImports.push( {
                 path:    importBenchFilePath,
                 exports: suitesToExports
@@ -192,7 +209,7 @@ const computeBenchmarksTask       = ( done ) => {
     // Use a fallback in case no benches were found at all
     if ( benchRootImports.length === 0 ) {
         log( 'Warning ', yellow( 'No usable exports found, generate default file to avoid frontend breakage.' ) )
-        const defaultBenchesDir  = join( benchesDir, 'default' )
+        const defaultBenchesDir  = join( packageTestsBenchmarksDirectory, 'default' )
         const defaultBenchesPath = join( defaultBenchesDir, 'default.bench.js' )
 
         createDirectoryIfNotExist( defaultBenchesDir )
@@ -209,7 +226,7 @@ const computeBenchmarksTask       = ( done ) => {
         `\tsuite.run()` + '\n' +
         `}` + '\n'
 
-    const benchesFilePath = join( benchesDir, `${ packageName }.benchmarks.js` )
+    const benchesFilePath = join( packageTestsBenchmarksDirectory, `${ packageName }.benchmarks.js` )
     createFile( benchesFilePath, benchesTemplate )
 
     done()

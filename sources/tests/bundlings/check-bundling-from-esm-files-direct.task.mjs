@@ -4,12 +4,14 @@ import {
     existsSync,
     rmSync
 }                 from 'fs'
+import { glob }   from 'glob'
 import {
     basename,
     dirname,
     extname,
-    join
-}                 from 'path'
+    join,
+    normalize
+} from 'path'
 import { rollup } from 'rollup'
 import {
     getConfigurationFrom,
@@ -24,9 +26,6 @@ const {
           green,
           magenta,
       } = colors
-
-const sourcesFilesLocation = join( 'tests', 'bundlings', 'check-bundling.conf.mjs' )
-const sourcesFilesPath     = getConfigurationPathFor( sourcesFilesLocation )
 
 const configurationLocation = join( 'tests', 'bundlings', 'check-bundling-from-esm-files-direct.conf.mjs' )
 const configurationPath     = getConfigurationPathFor( configurationLocation )
@@ -45,10 +44,21 @@ const checkBundlingFromEsmFilesDirectTask       = async ( done ) => {
         rmSync( outputDir, { recursive: true } )
     }
 
-    const sourcesFiles  = await getConfigurationFrom( sourcesFilesPath )
     const configuration = await getConfigurationFrom( configurationPath )
 
-    for ( let sourceFile of sourcesFiles ) {
+    // Get source files to process
+    const pattern     = join( packageSourcesDirectory, '**' )
+    const sourceFiles = glob.sync( pattern )
+                            .map( filePath => normalize( filePath ) )
+                            .filter( filePath => {
+                                const fileName         = basename( filePath )
+                                const isJsFile         = fileName.endsWith( '.js' )
+                                const isNotPrivateFile = !fileName.startsWith( '_' )
+                                const isNotIgnoredFile = !configuration.ignoredFiles.includes( fileName )
+                                return isJsFile && isNotPrivateFile && isNotIgnoredFile
+                            } )
+
+    for ( let sourceFile of sourceFiles ) {
 
         const specificFilePath = sourceFile.replace( packageSourcesDirectory, '' )
         const specificDir      = dirname( specificFilePath )
@@ -57,16 +67,16 @@ const checkBundlingFromEsmFilesDirectTask       = async ( done ) => {
         const bundleFileName = `${ fileName }.bundle.js`
         const bundleFilePath = join( outputDir, specificDir, bundleFileName )
 
-        configuration.input       = sourceFile
-        configuration.output.file = bundleFilePath
+        configuration.buildOptions.input       = sourceFile
+        configuration.buildOptions.output.file = bundleFilePath
 
         try {
 
-            log( 'Bundling', green( configuration.output.file ) )
+            log( 'Bundling', green( configuration.buildOptions.output.file ) )
 
-            const bundle = await rollup( configuration )
-            await bundle.generate( configuration.output )
-            await bundle.write( configuration.output )
+            const bundle = await rollup( configuration.buildOptions )
+            await bundle.generate( configuration.buildOptions.output )
+            await bundle.write( configuration.buildOptions.output )
 
         } catch ( error ) {
 
