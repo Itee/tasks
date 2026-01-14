@@ -1,3 +1,9 @@
+# [v1.0.5](https://github.com/Itee/itee-tasks/compare/v1.0.4...v1.0.5) (2026-01-14)
+
+## 🐛 Bug Fixes
+- [`d46c8f8`](https://github.com/Itee/itee-tasks/commit/d46c8f8)  (check-bundling) fix wrong package import path 
+- [`6bd2598`](https://github.com/Itee/itee-tasks/commit/6bd2598)  (compute-benchmarks) fix wrong package import path
+
 # [v1.0.4](https://github.com/Itee/itee-tasks/compare/v1.0.3...v1.0.4) (2026-01-13)
 
 # [v1.0.3](https://github.com/Itee/itee-tasks/compare/v1.0.2...v1.0.3) (2026-01-13)
