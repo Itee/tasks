@@ -57,9 +57,9 @@ function getTaskConfigurationPathFor( filename ) {
                            : relative( packageTasksDirectory, filename )
 
     // Generate all possible config file path depending on file extension and default or user defined
-    const terminalExtension  = extname( relativeTaskPath )
-    const searchValue        = `.task${ terminalExtension }`
-    const replaceValues      = [
+    const terminalExtension = extname( relativeTaskPath )
+    const searchValue       = relativeTaskPath.includes( '.task.' ) ? `.task${ terminalExtension }` : terminalExtension
+    const replaceValues     = [
         '.conf.json',
         '.conf.js',
         '.conf.mjs',
@@ -73,8 +73,8 @@ function getTaskConfigurationPathFor( filename ) {
         const packageConfigurationPath = join( packageTasksConfigurationsDirectory, configurationLocation )
         const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, configurationLocation )
 
-        packageConfigurationPaths.push(packageConfigurationPath)
-        defaultConfigurationPaths.push(defaultConfigurationPath)
+        packageConfigurationPaths.push( packageConfigurationPath )
+        defaultConfigurationPaths.push( defaultConfigurationPath )
     }
 
     let configurationPath
@@ -105,7 +105,8 @@ function getTaskConfigurationPathFor( filename ) {
 
     // Else throw an error
     if ( !configurationPath ) {
-        throw new Error( `Unable to find configuration in package configuration paths ${ packageConfigurationPaths.join( ', ' ) } nor in default configuration paths ${ defaultConfigurationPaths.join( ', ' ) }.` )
+        throw new Error( `Unable to find configuration in package configuration paths ${ packageConfigurationPaths.join( ', ' ) } nor in default configuration paths ${ defaultConfigurationPaths.join(
+            ', ' ) }.` )
     }
 
     return configurationPath
