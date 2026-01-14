@@ -1,7 +1,7 @@
 import colors       from 'ansi-colors'
 import childProcess from 'child_process'
 import log          from 'fancy-log'
-import { glob }     from 'glob/dist/esm/index.d.ts'
+import { glob }     from 'glob'
 import {
     basename,
     dirname,
