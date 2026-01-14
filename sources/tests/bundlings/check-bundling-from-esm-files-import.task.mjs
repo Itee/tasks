@@ -6,7 +6,7 @@ import {
     rmSync,
     writeFileSync
 }                 from 'fs'
-import { glob }   from 'glob/dist/esm/index.d.ts'
+import { glob }   from 'glob'
 import {
     basename,
     dirname,
