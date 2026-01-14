@@ -1,3 +1,8 @@
+# [v1.0.6](https://github.com/Itee/itee-tasks/compare/v1.0.5...v1.0.6) (2026-01-14)
+
+## 🐛 Bug Fixes
+- [`53d9dac`](https://github.com/Itee/itee-tasks/commit/53d9dac)  (utils) fix search config for different kind of config files (js, mjs and json)
+
 # [v1.0.5](https://github.com/Itee/itee-tasks/compare/v1.0.4...v1.0.5) (2026-01-14)
 
 ## 🐛 Bug Fixes
