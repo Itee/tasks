@@ -1,21 +1,16 @@
-import { join } from 'path'
+import { basename } from 'node:path'
 import {
-    getConfigurationFrom,
-    getConfigurationPathFor,
+    getTaskConfigurationFor,
     logLoadingTask,
     serializeTasksFrom
-}               from '../../_utils.mjs'
+}                   from '../../_utils.mjs'
 
+logLoadingTask( import.meta.filename )
 
-const configurationLocation = join( 'tests', 'benchmarks', 'run-benchmarks.conf.mjs' )
-const configurationPath     = getConfigurationPathFor( configurationLocation )
-const configuration         = await getConfigurationFrom( configurationPath )
-
+const configuration                = await getTaskConfigurationFor( import.meta.filename )
 const runBenchmarksTestsTask       = await serializeTasksFrom( configuration )
-runBenchmarksTestsTask.displayName = 'run-benchmarks'
+runBenchmarksTestsTask.displayName = basename( import.meta.filename, '.task.mjs' )
 runBenchmarksTestsTask.description = 'Will run benchmarks in back and front environments.'
 runBenchmarksTestsTask.flags       = null
-
-logLoadingTask( import.meta.filename, runBenchmarksTestsTask, configurationPath )
 
 export { runBenchmarksTestsTask }

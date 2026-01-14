@@ -1,18 +1,16 @@
 import colors          from 'ansi-colors'
 import { deleteAsync } from 'del'
 import log             from 'fancy-log'
-import { join }        from 'path'
+import { basename }    from 'node:path'
 import {
-    getConfigurationFrom,
-    getConfigurationPathFor,
+    getTaskConfigurationFor,
     logLoadingTask
 }                      from '../_utils.mjs'
 
-const { red }  = colors
+logLoadingTask( import.meta.filename )
 
-const configurationLocation = join( 'cleans', 'clean.conf.mjs' )
-const configurationPath     = getConfigurationPathFor( configurationLocation )
-const configuration         = await getConfigurationFrom( configurationPath )
+const { red }       = colors
+const configuration = await getTaskConfigurationFor( import.meta.filename )
 
 /**
  * @method npm run clean
@@ -27,10 +25,8 @@ const cleanTask       = () => deleteAsync( configuration, {
         log( `Deleting [${ progress.deletedCount }/${ progress.totalCount }]<${ percent }%>${ spacer }:`, red( path ) )
     }
 } )
-cleanTask.displayName = 'clean'
+cleanTask.displayName = basename( import.meta.filename, '.task.mjs' )
 cleanTask.description = 'Will delete builds and temporary folders'
 cleanTask.flags       = null
-
-logLoadingTask( import.meta.filename, cleanTask, configurationPath )
 
 export { cleanTask }

@@ -1,8 +1,11 @@
 import { series }                              from 'gulp'
+import { basename }                            from 'node:path'
 import { logLoadingTask }                      from '../../_utils.mjs'
 import { checkBundlingFromEsmBuildImportTask } from './check-bundling-from-esm-build-import.task.mjs'
 import { checkBundlingFromEsmFilesDirectTask } from './check-bundling-from-esm-files-direct.task.mjs'
 import { checkBundlingFromEsmFilesImportTask } from './check-bundling-from-esm-files-import.task.mjs'
+
+logLoadingTask( import.meta.filename )
 
 /**
  * @description In view to detect bundling side effects this task will
@@ -15,9 +18,7 @@ const checkBundlingTask       = series(
     checkBundlingFromEsmBuildImportTask,
     checkBundlingFromEsmFilesDirectTask
 )
-checkBundlingTask.displayName = 'check-bundling'
+checkBundlingTask.displayName = basename( import.meta.filename, '.task.mjs' )
 checkBundlingTask.description = 'In view to detect bundling side effects this task will create intermediary file for each individual export and then try to bundle them.'
-
-logLoadingTask( import.meta.filename, checkBundlingTask )
 
 export { checkBundlingTask }

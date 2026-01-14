@@ -10,24 +10,21 @@ import {
     join,
     normalize,
     relative
-} from 'path'
+}                          from 'path'
 import {
     createDirectoryIfNotExist,
     createFile,
-    getConfigurationFrom,
-    getConfigurationPathFor,
     getPrettyPackageName,
+    getTaskConfigurationFor,
     Indenter,
     logLoadingTask,
     packageName,
     packageNodeModulesDirectory,
     packageSourcesDirectory,
     packageTestsUnitsDirectory
-} from '../../_utils.mjs'
+}                          from '../../_utils.mjs'
 
-const configurationLocation = join( 'tests', 'units', 'compute-unit-tests.conf.mjs' )
-const configurationPath     = getConfigurationPathFor( configurationLocation )
-const configuration         = await getConfigurationFrom( configurationPath )
+logLoadingTask( import.meta.filename )
 
 const {
           red,
@@ -37,15 +34,15 @@ const {
 /**
  * @description Will generate unit test files from source code using type inference from comments
  */
-const computeUnitTestsTask       = ( done ) => {
+const computeUnitTestsTask       = async ( done ) => {
 
     createDirectoryIfNotExist( packageTestsUnitsDirectory )
 
     // Get task configuration
-    const filePathsToIgnore = configuration
+    const filePathsToIgnore = await getTaskConfigurationFor( import.meta.filename )
 
     // Get source files to process
-    const pattern = join( packageSourcesDirectory, '**' )
+    const pattern     = join( packageSourcesDirectory, '**' )
     const sourceFiles = glob.sync( pattern )
                             .map( filePath => normalize( filePath ) )
                             .filter( filePath => {
@@ -543,10 +540,8 @@ const computeUnitTestsTask       = ( done ) => {
     done()
 
 }
-computeUnitTestsTask.displayName = 'compute-unit-tests'
+computeUnitTestsTask.displayName = basename( import.meta.filename, '.task.mjs' )
 computeUnitTestsTask.description = 'Will generate unit test files from source code using type inference from comments'
 computeUnitTestsTask.flags       = null
-
-logLoadingTask( import.meta.filename, computeUnitTestsTask, configurationPath )
 
 export { computeUnitTestsTask }

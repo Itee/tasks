@@ -1,21 +1,16 @@
-import { join } from 'path'
+import { basename } from 'node:path'
 import {
-    getConfigurationFrom,
-    getConfigurationPathFor,
+    getTaskConfigurationFor,
     logLoadingTask,
     serializeTasksFrom
-}               from '../../_utils.mjs'
+}                   from '../../_utils.mjs'
 
+logLoadingTask( import.meta.filename )
 
-const configurationLocation = join( 'tests', 'units', 'run-unit-tests.conf.mjs' )
-const configurationPath     = getConfigurationPathFor( configurationLocation )
-const configuration         = await getConfigurationFrom( configurationPath )
-
+const configuration          = await getTaskConfigurationFor( import.meta.filename )
 const runUnitTestsTask       = await serializeTasksFrom( configuration )
-runUnitTestsTask.displayName = 'run-unit-tests'
+runUnitTestsTask.displayName = basename( import.meta.filename, '.task.mjs' )
 runUnitTestsTask.description = 'Will run unit tests in back and front environments.'
 runUnitTestsTask.flags       = null
-
-logLoadingTask( import.meta.filename, runUnitTestsTask, configurationPath )
 
 export { runUnitTestsTask }

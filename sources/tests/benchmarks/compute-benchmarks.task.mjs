@@ -13,8 +13,7 @@ import {
 import {
     createDirectoryIfNotExist,
     createFile,
-    getConfigurationFrom,
-    getConfigurationPathFor,
+    getTaskConfigurationFor,
     logLoadingTask,
     packageName,
     packageNodeModulesDirectory,
@@ -23,24 +22,22 @@ import {
     packageTestsDirectory
 }                   from '../../_utils.mjs'
 
+logLoadingTask( import.meta.filename )
+
 const {
           red,
           yellow,
       } = colors
 
-const configurationLocation = join( 'tests', 'benchmarks', 'compute-benchmarks.conf.mjs' )
-const configurationPath     = getConfigurationPathFor( configurationLocation )
-const configuration         = await getConfigurationFrom( configurationPath )
-
 /**
  * @description Will generate benchmarks files from source code against provided alternatives
  */
-const computeBenchmarksTask       = ( done ) => {
+const computeBenchmarksTask       = async ( done ) => {
 
     createDirectoryIfNotExist( packageTestsBenchmarksDirectory )
 
     // Get task configuration
-    const filePathsToIgnore = configuration
+    const filePathsToIgnore = await getTaskConfigurationFor( import.meta.filename )
 
     // Get source files to process
     const pattern     = join( packageSourcesDirectory, '**' )
@@ -232,10 +229,8 @@ const computeBenchmarksTask       = ( done ) => {
     done()
 
 }
-computeBenchmarksTask.displayName = 'compute-benchmarks'
+computeBenchmarksTask.displayName = basename( import.meta.filename, '.task.mjs' )
 computeBenchmarksTask.description = 'Will generate benchmarks files from source code against provided alternatives.'
 computeBenchmarksTask.flags       = null
-
-logLoadingTask( import.meta.filename, computeBenchmarksTask, configurationPath )
 
 export { computeBenchmarksTask }

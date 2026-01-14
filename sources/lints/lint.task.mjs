@@ -1,18 +1,17 @@
 import colors        from 'ansi-colors'
 import log           from 'fancy-log'
 import child_process from 'node:child_process'
+import { basename }  from 'node:path'
 import { promisify } from 'node:util'
-import { join }      from 'path'
 import {
-    getConfigurationPathFor,
+    getTaskConfigurationPathFor,
     logLoadingTask
 }                    from '../_utils.mjs'
 
-const execFile = promisify( child_process.execFile )
-const { red }        = colors
+logLoadingTask( import.meta.filename )
 
-const configurationLocation = join( 'lints', 'lint.conf.mjs' )
-const configurationPath     = getConfigurationPathFor( configurationLocation )
+const execFile = promisify( child_process.execFile )
+const { red }  = colors
 
 /**
  * @method npm run lint
@@ -22,6 +21,8 @@ const configurationPath     = getConfigurationPathFor( configurationLocation )
 const lintTask       = async ( done ) => {
 
     try {
+
+        const configurationPath = getTaskConfigurationPathFor( import.meta.filename )
 
         const { stdout } = await execFile( 'npx', [ 'eslint', '--config', configurationPath, '--fix' ] )
         if ( stdout !== '' ) {
@@ -38,10 +39,8 @@ const lintTask       = async ( done ) => {
     }
 
 }
-lintTask.displayName = 'lint'
+lintTask.displayName = basename( import.meta.filename, '.task.mjs' )
 lintTask.description = 'Will lint the sources files and try to fix the style when possible.'
 lintTask.flags       = null
-
-logLoadingTask( import.meta.filename, lintTask, configurationPath )
 
 export { lintTask }

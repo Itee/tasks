@@ -1,4 +1,5 @@
 import { series }                from 'gulp'
+import { basename }              from 'node:path'
 import { logLoadingTask }        from '../_utils.mjs'
 import { buildTask }             from '../builds/build.task.mjs'
 import { cleanTask }             from '../cleans/clean.task.mjs'
@@ -7,6 +8,8 @@ import { lintTask }              from '../lints/lint.task.mjs'
 import { computeBenchmarksTask } from '../tests/benchmarks/compute-benchmarks.task.mjs'
 import { runTestsTask }          from '../tests/run-tests.task.mjs'
 import { computeUnitTestsTask }  from '../tests/units/compute-unit-tests.task.mjs'
+
+logLoadingTask( import.meta.filename )
 
 /**
  * @method npm run release
@@ -22,10 +25,8 @@ const releaseTask       = series(
     lintTask,
     docTask,
 )
-releaseTask.displayName = 'release'
+releaseTask.displayName = basename( import.meta.filename, '.task.mjs' )
 releaseTask.description = 'Will perform a complete release of the library including \'clean\', \'lint\', \'doc\', \'test\' and finally \'build\'.'
 releaseTask.flags       = null
-
-logLoadingTask( import.meta.filename, releaseTask )
 
 export { releaseTask }

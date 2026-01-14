@@ -1,7 +1,10 @@
 import { series }                 from 'gulp'
+import { basename }               from 'node:path'
 import { logLoadingTask }         from '../_utils.mjs'
 import { runBenchmarksTestsTask } from './benchmarks/run-benchmarks.task.mjs'
 import { runUnitTestsTask }       from './units/run-unit-tests.task.mjs'
+
+logLoadingTask( import.meta.filename )
 
 /**
  * @method npm run test
@@ -12,10 +15,8 @@ const runTestsTask       = series(
     runBenchmarksTestsTask,
     runUnitTestsTask,
 )
-runTestsTask.displayName = 'run-tests'
+runTestsTask.displayName = basename( import.meta.filename, '.task.mjs' )
 runTestsTask.description = 'Will run unit tests and benchmarks for backend (node) and frontend (web-test-runner) environments.'
 runTestsTask.flags       = null
-
-logLoadingTask( import.meta.filename, runTestsTask )
 
 export { runTestsTask }

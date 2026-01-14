@@ -7,9 +7,8 @@ import {
     relative
 }                        from 'path'
 import {
-    getConfigurationFrom,
-    getConfigurationPathFor,
     getFilesFrom,
+    getTaskConfigurationFor,
     iteePackageRootDirectory,
     iteePackageSourcesDirectory,
     packageNodeModulesDirectory,
@@ -22,8 +21,7 @@ const {
           yellow
       } = colors
 
-const configurationPath = getConfigurationPathFor( 'refresh.conf.mjs' )
-const configuration     = await getConfigurationFrom( configurationPath )
+const configuration = await getTaskConfigurationFor( import.meta.filename )
 
 // Get and filter tasks to expose
 const defaultTaskPattern = join( iteePackageSourcesDirectory, '/{*.task.mjs,**/*.task.mjs,**/**/*.task.mjs}' )
@@ -88,7 +86,9 @@ for ( const taskFile of defaultTaskFiles ) {
 gulpfileContent += '\n'
 
 // Generate user tasks exports and append to gulpfile content
-gulpfileContent += '// User defined tasks\n'
+if ( userTaskFiles.length > 0 ) {
+    gulpfileContent += '// User defined tasks\n'
+}
 for ( const taskFile of userTaskFiles ) {
     const relativeTaskFile = relative( packageRootDirectory, taskFile )
     gulpfileContent += `export * from './${ relativeTaskFile }'\n`

@@ -1,16 +1,14 @@
 import { startTestRunner } from '@web/test-runner'
 import colors              from 'ansi-colors'
-import { join }            from 'path'
+import { basename }        from 'node:path'
 import {
-    getConfigurationFrom,
-    getConfigurationPathFor,
+    getTaskConfigurationFor,
     logLoadingTask
 }                          from '../../_utils.mjs'
 
-const { red } = colors
+logLoadingTask( import.meta.filename )
 
-const configurationLocation = join( 'tests', 'benchmarks', 'run-benchmarks-for-frontend.conf.mjs' )
-const configurationPath     = getConfigurationPathFor( configurationLocation )
+const { red } = colors
 
 /**
  * @description Will run benchmarks with web-test-runner
@@ -18,7 +16,7 @@ const configurationPath     = getConfigurationPathFor( configurationLocation )
 const runBenchmarksForFrontendTask       = () => {
     return new Promise( async ( resolve, reject ) => {
 
-        const configuration = await getConfigurationFrom( configurationPath )
+        const configuration = await getTaskConfigurationFor( import.meta.filename )
         const testRunner    = await startTestRunner( {
             config:          configuration,
             readCliArgs:     false,
@@ -43,10 +41,8 @@ const runBenchmarksForFrontendTask       = () => {
 
     } )
 }
-runBenchmarksForFrontendTask.displayName = 'run-benchmarks-for-frontend'
+runBenchmarksForFrontendTask.displayName = basename( import.meta.filename, '.task.mjs' )
 runBenchmarksForFrontendTask.description = 'Will run benchmarks with web-test-runner.'
 runBenchmarksForFrontendTask.flags       = null
-
-logLoadingTask( import.meta.filename, runBenchmarksForFrontendTask, configurationPath )
 
 export { runBenchmarksForFrontendTask }
