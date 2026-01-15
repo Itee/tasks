@@ -38,9 +38,6 @@ const {
 
 /// Debugging
 
-const _processCwd = process.cwd()
-log(_processCwd)
-log(process.env)
 
 /// Package paths and data
 
