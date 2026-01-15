@@ -1,6 +1,10 @@
+import commonjs          from '@rollup/plugin-commonjs'
+import nodeResolve       from '@rollup/plugin-node-resolve'
+import terser            from '@rollup/plugin-terser'
 import colors            from 'ansi-colors'
 import childProcess      from 'child_process'
 import log               from 'fancy-log'
+import figlet            from 'figlet'
 import { glob }          from 'glob'
 import {
     parallel,
@@ -21,6 +25,7 @@ import {
     relative,
 }                        from 'node:path'
 import { fileURLToPath } from 'node:url'
+import replace           from 'rollup-plugin-re'
 
 const {
           red,
@@ -32,6 +37,119 @@ const {
       } = colors
 
 ///
+
+function _getPackageRootDirectory() {
+
+    let __dirname
+
+    if ( import.meta.dirname ) {
+        __dirname = import.meta.dirname
+    } else if ( import.meta.filename ) {
+        __dirname = dirname( import.meta.filename )
+    } else if ( import.meta.url ) {
+        const __filename = fileURLToPath( import.meta.url )
+        __dirname        = dirname( __filename )
+    } else {
+        throw new Error( 'Unable to retrieve module dirname.' )
+    }
+
+    return join( __dirname, '..' )
+
+}
+
+const iteePackageRootDirectory           = _getPackageRootDirectory()
+const iteePackageJsonPath                = join( iteePackageRootDirectory, 'package.json' )
+const iteePackageConfigurationsDirectory = join( iteePackageRootDirectory, 'configs' )
+const iteePackageNodeModulesDirectory    = join( iteePackageRootDirectory, 'node_modules' )
+const iteePackageSourcesDirectory        = join( iteePackageRootDirectory, 'sources' )
+
+const packageRootDirectory                = iteePackageRootDirectory.includes( 'node_modules' ) ? join( iteePackageRootDirectory, '../../' ) : iteePackageRootDirectory
+const packageTasksDirectory               = join( packageRootDirectory, '.tasks' )
+const packageTasksConfigurationsDirectory = join( packageTasksDirectory, 'configs' )
+const packageNodeModulesDirectory         = join( packageRootDirectory, 'node_modules' )
+const packageBuildsDirectory              = join( packageRootDirectory, 'builds' )
+const packageSourcesDirectory             = join( packageRootDirectory, 'sources' )
+const packageSourcesBackendDirectory      = join( packageSourcesDirectory, 'backend' )
+const packageSourcesCommonDirectory       = join( packageSourcesDirectory, 'common' )
+const packageSourcesFrontendDirectory     = join( packageSourcesDirectory, 'frontend' )
+const packageTestsDirectory               = join( packageRootDirectory, 'tests' )
+const packageTestsBenchmarksDirectory     = join( packageTestsDirectory, 'benchmarks' )
+const packageTestsBundlesDirectory        = join( packageTestsDirectory, 'bundles' )
+const packageTestsUnitsDirectory          = join( packageTestsDirectory, 'units' )
+const packageDocsDirectory                = join( packageRootDirectory, 'docs' )
+const packageTutorialsDirectory           = join( packageRootDirectory, 'tutorials' )
+const packageJsonPath                     = join( packageRootDirectory, 'package.json' )
+
+///
+
+const packageJson        = getJsonFrom( packageJsonPath )
+const packageName        = packageJson.name
+const packageVersion     = packageJson.version
+const packageDescription = packageJson.description
+const packageAuthor      = packageJson.author
+const packageLicense     = packageJson.license
+
+function getPrettyPackageName( separator = ' ' ) {
+
+    let prettyPackageName = ''
+
+    const nameSplits = packageName.split( '-' )
+    for ( const nameSplit of nameSplits ) {
+        prettyPackageName += nameSplit.charAt( 0 ).toUpperCase() + nameSplit.slice( 1 ) + separator
+    }
+    prettyPackageName = prettyPackageName.slice( 0, -1 )
+
+    return prettyPackageName
+
+}
+
+function getPrettyPackageVersion() {
+
+    return 'v' + packageVersion
+
+}
+
+function getPrettyNodeVersion() {
+
+    let nodeVersion = 'vX.x.ₓ'
+
+    try {
+        nodeVersion = childProcess.execFileSync( 'node', [ '--version' ] )
+                                  .toString()
+                                  .replace( /(\r\n|\n|\r)/gm, '' )
+    } catch ( e ) {
+        log( red( e ) )
+
+        if ( e.message.includes( 'ENOENT' ) ) {
+            nodeVersion += yellow( ' Not seems to be accessible from the path environment.' )
+        }
+    }
+
+    return ' node: ' + nodeVersion
+
+}
+
+function getPrettyNpmVersion() {
+
+    let npmVersion = 'X.x.ₓ'
+
+    try {
+        npmVersion = childProcess.execFileSync( 'npm', [ '--version' ] )
+                                 .toString()
+                                 .replace( /(\r\n|\n|\r)/gm, '' )
+    } catch ( e ) {
+        log( red( e ) )
+
+        if ( e.message.includes( 'ENOENT' ) ) {
+            npmVersion += yellow( ' Not seems to be accessible from the path environment.' )
+        }
+    }
+
+    return ' npm:  v' + npmVersion
+
+}
+
+/// File system Management
 
 function createDirectoryIfNotExist( directoryPath ) {
 
@@ -48,6 +166,76 @@ function getJsonFrom( path ) {
     return JSON.parse( buffer.toString() )
 
 }
+
+function createFile( filePath, fileContent ) {
+
+    log( 'Creating', green( filePath ) )
+    writeFileSync( filePath, fileContent )
+
+}
+
+function getFilesFrom( globPattern, filter = ( any ) => true ) {
+
+    return glob.sync( globPattern )
+               .map( filePath => normalize( filePath ) )
+               .filter( filter )
+
+}
+
+/// Task Management
+
+async function getTasksFrom( taskFiles = [] ) {
+
+    const tasks = []
+    for ( const taskFile of taskFiles ) {
+        const relativeTaskFile = relative( packageRootDirectory, taskFile )
+
+        try {
+
+            const module = await import(taskFile)
+
+            const exportStrings = []
+            for ( const moduleKey in module ) {
+                const task = module[ moduleKey ]
+                tasks.push( task )
+
+                const name         = task.name ?? null
+                const displayName  = task.displayName ?? null
+                const fullName     = ( moduleKey !== name ) ? `${ blue( moduleKey ) }( ${ magenta( name ) } )` : `${ blue( name ) }`
+                const exportAs     = ( displayName ) ? ` as ${ cyan( displayName ) }` : ''
+                const exportString = fullName + exportAs
+                exportStrings.push( exportString )
+            }
+
+            //log( 'Process ', green( relativeTaskFile ), `with task${ ( exportStrings.length > 1 ) ? 's' : '' }`, exportStrings.join( ', ' ) )
+
+        } catch ( error ) {
+
+            log( 'Error   ', red( relativeTaskFile ), error.message )
+
+        }
+
+    }
+
+    return tasks
+
+}
+
+async function serializeTasksFrom( taskFiles = [] ) {
+
+    const tasks = await getTasksFrom( taskFiles )
+    return series( ...tasks )
+
+}
+
+async function parallelizeTasksFrom( taskFiles = [] ) {
+
+    const tasks = await getTasksFrom( taskFiles )
+    return parallel( ...tasks )
+
+}
+
+/// Task configuration management
 
 function getTaskConfigurationPathFor( filename ) {
 
@@ -131,186 +319,192 @@ async function getTaskConfigurationFor( filename ) {
 
 }
 
-function createFile( filePath, fileContent ) {
+/// Build management
 
-    log( 'Creating', green( filePath ) )
-    writeFileSync( filePath, fileContent )
+function getPrettyFormatForBanner( format ) {
 
-}
+    let prettyFormat = ''
 
-function getFilesFrom( globPattern, filter = ( any ) => true ) {
+    switch ( format ) {
 
-    return glob.sync( globPattern )
-               .map( filePath => normalize( filePath ) )
-               .filter( filter )
+        case 'cjs':
+            prettyFormat = 'CommonJs'
+            break
 
-}
+        case 'esm':
+            prettyFormat = 'EsModule'
+            break
 
-///
+        case 'iife':
+            prettyFormat = 'Standalone'
+            break
 
-function getPackageRootDirectory() {
+        case 'umd':
+            prettyFormat = 'Universal'
+            break
 
-    let __dirname
+        default:
+            throw new RangeError( `Invalid switch parameter: ${ format }` )
 
-    if ( import.meta.dirname ) {
-        __dirname = import.meta.dirname
-    } else if ( import.meta.filename ) {
-        __dirname = dirname( import.meta.filename )
-    } else if ( import.meta.url ) {
-        const __filename = fileURLToPath( import.meta.url )
-        __dirname        = dirname( __filename )
-    } else {
-        throw new Error( 'Unable to retrieve module dirname.' )
     }
 
-    return join( __dirname, '..' )
+    return prettyFormat
 
 }
 
-const iteePackageRootDirectory           = getPackageRootDirectory()
-const iteePackageJsonPath                = join( iteePackageRootDirectory, 'package.json' )
-const iteePackageConfigurationsDirectory = join( iteePackageRootDirectory, 'configs' )
-const iteePackageNodeModulesDirectory    = join( iteePackageRootDirectory, 'node_modules' )
-const iteePackageSourcesDirectory        = join( iteePackageRootDirectory, 'sources' )
+function convertBannerIntoComment( banner ) {
 
-const packageRootDirectory                = iteePackageRootDirectory.includes( 'node_modules' ) ? join( iteePackageRootDirectory, '../../' ) : iteePackageRootDirectory
-const packageTasksDirectory               = join( packageRootDirectory, '.tasks' )
-const packageTasksConfigurationsDirectory = join( packageTasksDirectory, 'configs' )
-const packageNodeModulesDirectory         = join( packageRootDirectory, 'node_modules' )
-const packageBuildsDirectory              = join( packageRootDirectory, 'builds' )
-const packageSourcesDirectory             = join( packageRootDirectory, 'sources' )
-const packageSourcesBackendDirectory      = join( packageSourcesDirectory, 'backend' )
-const packageSourcesCommonDirectory       = join( packageSourcesDirectory, 'common' )
-const packageSourcesFrontendDirectory     = join( packageSourcesDirectory, 'frontend' )
-const packageTestsDirectory               = join( packageRootDirectory, 'tests' )
-const packageTestsBenchmarksDirectory     = join( packageTestsDirectory, 'benchmarks' )
-const packageTestsBundlesDirectory        = join( packageTestsDirectory, 'bundles' )
-const packageTestsUnitsDirectory          = join( packageTestsDirectory, 'units' )
-const packageDocsDirectory                = join( packageRootDirectory, 'docs' )
-const packageTutorialsDirectory           = join( packageRootDirectory, 'tutorials' )
-const packageJsonPath                     = join( packageRootDirectory, 'package.json' )
+    let bannerCommented = '/**\n'
+    bannerCommented += ' * '
+    bannerCommented += banner.replaceAll( '\n', '\n * ' )
+    bannerCommented += '\n'
+    bannerCommented += ` * @desc    ${ packageDescription }\n`
+    bannerCommented += ' * @author  [Tristan Valcke]{@link https://github.com/Itee}\n'
+    bannerCommented += ' * @license [BSD-3-Clause]{@link https://opensource.org/licenses/BSD-3-Clause}\n'
+    bannerCommented += ' * \n'
+    bannerCommented += ' */'
 
-///
-
-const packageJson        = getJsonFrom( packageJsonPath )
-const packageName        = packageJson.name
-const packageVersion     = packageJson.version
-const packageDescription = packageJson.description
-
-function getPrettyPackageName( separator = ' ' ) {
-
-    let prettyPackageName = ''
-
-    const nameSplits = packageName.split( '-' )
-    for ( const nameSplit of nameSplits ) {
-        prettyPackageName += nameSplit.charAt( 0 ).toUpperCase() + nameSplit.slice( 1 ) + separator
-    }
-    prettyPackageName = prettyPackageName.slice( 0, -1 )
-
-    return prettyPackageName
+    return bannerCommented
 
 }
 
-function getPrettyPackageVersion() {
+function computeBannerFor( format ) {
 
-    return 'v' + packageVersion
+    const packageName    = getPrettyPackageName( '.' )
+    const packageVersion = getPrettyPackageVersion()
+    const prettyFormat   = getPrettyFormatForBanner( format )
 
-}
-
-function getPrettyNodeVersion() {
-
-    let nodeVersion = 'vX.x.ₓ'
-
-    try {
-        nodeVersion = childProcess.execFileSync( 'node', [ '--version' ] )
-                                  .toString()
-                                  .replace( /(\r\n|\n|\r)/gm, '' )
-    } catch ( e ) {
-        log( red( e ) )
-
-        if ( e.message.includes( 'ENOENT' ) ) {
-            nodeVersion += yellow( ' Not seems to be accessible from the path environment.' )
+    const figText = figlet.textSync(
+        `${ packageName } ${ packageVersion } - ${ prettyFormat }`,
+        {
+            font:             'Tmplr',
+            horizontalLayout: 'default',
+            verticalLayout:   'default',
+            whitespaceBreak:  true,
         }
-    }
+    )
 
-    return ' node: ' + nodeVersion
+    return convertBannerIntoComment( figText )
 
 }
 
-function getPrettyNpmVersion() {
+function computeIntroFor( requestPackages ) {
 
-    let npmVersion = 'X.x.ₓ'
+    return ''
 
-    try {
-        npmVersion = childProcess.execFileSync( 'npm', [ '--version' ] )
-                                 .toString()
-                                 .replace( /(\r\n|\n|\r)/gm, '' )
-    } catch ( e ) {
-        log( red( e ) )
+}
 
-        if ( e.message.includes( 'ENOENT' ) ) {
-            npmVersion += yellow( ' Not seems to be accessible from the path environment.' )
+/**
+ * Will create an appropriate configuration object for rollup, related to the given arguments.
+ *
+ * @generator
+ * @param options
+ * @return {Array.<json>} An array of rollup configuration
+ */
+function createRollupConfigs( options = undefined ) {
+    'use strict'
+
+    const _options = options ? options : {
+        input:     join( packageSourcesDirectory, `${ packageName }.js` ),
+        output:    packageBuildsDirectory,
+        formats:   [ 'esm', 'cjs', 'iife' ],
+        envs:      [ 'dev', 'prod' ],
+        sourcemap: true,
+        treeshake: true
+    }
+
+    const {
+              input,
+              output,
+              formats,
+              envs,
+              treeshake
+          }        = _options
+    const name     = getPrettyPackageName( '.' )
+    const fileName = basename( input, '.js' )
+
+    const configs = []
+
+    for ( let formatIndex = 0, numberOfFormats = formats.length ; formatIndex < numberOfFormats ; ++formatIndex ) {
+
+        for ( let envIndex = 0, numberOfEnvs = envs.length ; envIndex < numberOfEnvs ; envIndex++ ) {
+
+            const env        = envs[ envIndex ]
+            const isProd     = ( env.includes( 'prod' ) )
+            const format     = formats[ formatIndex ]
+            const outputPath = ( isProd ) ? join( output, `${ fileName }.${ format }.min.js` ) : join( output, `${ fileName }.${ format }.js` )
+
+            configs.push( {
+                input:     input,
+                external:  ( format === 'cjs' ) ? [
+                    'fs'
+                ] : [],
+                plugins:   [
+                    replace( {
+                        defines: {
+                            IS_REMOVE_ON_BUILD:  false,
+                            IS_BACKEND_SPECIFIC: ( format === 'cjs' )
+                        }
+                    } ),
+                    commonjs( {
+                        include: 'node_modules/**'
+                    } ),
+                    nodeResolve( {
+                        preferBuiltins: true
+                    } ),
+                    isProd && terser()
+                ],
+                onwarn:    ( {
+                    loc,
+                    frame,
+                    message
+                } ) => {
+
+                    // Ignore some errors
+                    if ( message.includes( 'Circular dependency' ) ) { return }
+                    if ( message.includes( 'plugin uglify is deprecated' ) ) { return }
+
+                    if ( loc ) {
+                        process.stderr.write( `/!\\ ${ loc.file } (${ loc.line }:${ loc.column }) ${ frame } ${ message }\n` )
+                    } else {
+                        process.stderr.write( `/!\\ ${ message }\n` )
+                    }
+
+                },
+                treeshake: treeshake,
+                output:    {
+                    // core options
+                    file:    outputPath,
+                    format:  format,
+                    name:    name,
+                    globals: {},
+
+                    // advanced options
+                    paths:     {},
+                    banner:    ( isProd ) ? '' : _computeBanner( format ),
+                    footer:    '',
+                    intro:     ( !isProd && format === 'iife' ) ? _computeIntro() : '',
+                    outro:     '',
+                    sourcemap: !isProd,
+                    interop:   'auto',
+
+                    // danger zone
+                    exports: 'auto',
+                    amd:     {},
+                    indent:  '\t',
+                    strict:  true
+                }
+            } )
+
         }
-    }
-
-    return ' npm:  v' + npmVersion
-
-}
-
-///
-
-async function getTasksFrom( taskFiles = [] ) {
-
-    const tasks = []
-    for ( const taskFile of taskFiles ) {
-        const relativeTaskFile = relative( packageRootDirectory, taskFile )
-
-        try {
-
-            const module = await import(taskFile)
-
-            const exportStrings = []
-            for ( const moduleKey in module ) {
-                const task = module[ moduleKey ]
-                tasks.push( task )
-
-                const name         = task.name ?? null
-                const displayName  = task.displayName ?? null
-                const fullName     = ( moduleKey !== name ) ? `${ blue( moduleKey ) }( ${ magenta( name ) } )` : `${ blue( name ) }`
-                const exportAs     = ( displayName ) ? ` as ${ cyan( displayName ) }` : ''
-                const exportString = fullName + exportAs
-                exportStrings.push( exportString )
-            }
-
-            //log( 'Process ', green( relativeTaskFile ), `with task${ ( exportStrings.length > 1 ) ? 's' : '' }`, exportStrings.join( ', ' ) )
-
-        } catch ( error ) {
-
-            log( 'Error   ', red( relativeTaskFile ), error.message )
-
-        }
 
     }
 
-    return tasks
+    return configs
 
 }
 
-async function serializeTasksFrom( taskFiles = [] ) {
-
-    const tasks = await getTasksFrom( taskFiles )
-    return series( ...tasks )
-
-}
-
-async function parallelizeTasksFrom( taskFiles = [] ) {
-
-    const tasks = await getTasksFrom( taskFiles )
-    return parallel( ...tasks )
-
-}
-
-///
+/// Log Management
 
 function logLoadingTask( filename ) {
 
@@ -365,13 +559,6 @@ class Indenter {
 ///
 
 export {
-    createDirectoryIfNotExist,
-    getJsonFrom,
-    getTaskConfigurationPathFor,
-    getTaskConfigurationFor,
-    createFile,
-    getFilesFrom,
-
     iteePackageRootDirectory,
     iteePackageJsonPath,
     iteePackageConfigurationsDirectory,
@@ -394,18 +581,37 @@ export {
     packageDocsDirectory,
     packageTutorialsDirectory,
     packageJsonPath,
+
     packageJson,
     packageName,
     packageVersion,
     packageDescription,
+    packageAuthor,
+    packageLicense,
     getPrettyPackageName,
     getPrettyPackageVersion,
     getPrettyNodeVersion,
     getPrettyNpmVersion,
 
+
+    createDirectoryIfNotExist,
+    getJsonFrom,
+    createFile,
+    getFilesFrom,
+
     getTasksFrom,
     serializeTasksFrom,
     parallelizeTasksFrom,
+
+    getTaskConfigurationPathFor,
+    getTaskConfigurationFor,
+
+    getPrettyFormatForBanner,
+    convertBannerIntoComment,
+    computeBannerFor,
+    computeIntroFor,
+    createRollupConfigs,
+
     logLoadingTask,
 
     IndenterFactory as Indenter
