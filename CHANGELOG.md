@@ -1,3 +1,5 @@
+# [v1.0.13](https://github.com/Itee/tasks/compare/v1.0.12...v1.0.13) (2026-01-15)
+
 # [v1.0.12](https://github.com/Itee/itee-tasks/compare/v1.0.11...v1.0.12) (2026-01-14)
 
 # [v1.0.11](https://github.com/Itee/itee-tasks/compare/v1.0.10...v1.0.11) (2026-01-14)

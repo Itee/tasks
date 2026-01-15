@@ -1,6 +1,6 @@
 {
   "name": "@itee/tasks",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Allow to manage all commons itee gulp tasks into one place ",
   "keywords": [
     "itee",
