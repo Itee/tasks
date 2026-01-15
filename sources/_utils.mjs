@@ -38,6 +38,7 @@ const {
 
 /// Debugging
 
+const isDebugging = ( process.env.RUNNER_DEBUG && process.env.RUNNER_DEBUG === '1' )
 
 /// Package paths and data
 
@@ -508,6 +509,10 @@ function createRollupConfigs( options = undefined ) {
 /// Log Management
 
 function logLoadingTask( filename ) {
+
+    if ( !isDebugging ) {
+        return
+    }
 
     const taskPath = relative( packageRootDirectory, filename )
     const taskName = basename( filename, '.task.mjs' )

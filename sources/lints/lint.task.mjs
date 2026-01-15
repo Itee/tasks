@@ -10,10 +10,6 @@ import {
 
 logLoadingTask( import.meta.filename )
 
-const _processCwd = process.cwd()
-log(_processCwd)
-log(process.env)
-
 const execFile = promisify( child_process.execFile )
 const { red }  = colors
 
