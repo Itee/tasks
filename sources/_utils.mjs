@@ -402,14 +402,12 @@ function computeIntroFor( requestPackages ) {
  * @return {Array.<json>} An array of rollup configuration
  */
 function createRollupConfigs( options = undefined ) {
-    'use strict'
 
     const _options = options ? options : {
         input:     join( packageSourcesDirectory, `${ packageName }.js` ),
         output:    packageBuildsDirectory,
         formats:   [ 'esm', 'cjs', 'iife' ],
         envs:      [ 'dev', 'prod' ],
-        sourcemap: true,
         treeshake: true
     }
 
@@ -481,9 +479,9 @@ function createRollupConfigs( options = undefined ) {
 
                     // advanced options
                     paths:     {},
-                    banner:    ( isProd ) ? '' : _computeBanner( format ),
+                    banner:    ( isProd ) ? '' : computeBannerFor( format ),
                     footer:    '',
-                    intro:     ( !isProd && format === 'iife' ) ? _computeIntro() : '',
+                    intro:     ( !isProd && format === 'iife' ) ? computeIntroFor() : '',
                     outro:     '',
                     sourcemap: !isProd,
                     interop:   'auto',
