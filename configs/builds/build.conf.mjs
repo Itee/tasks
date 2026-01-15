@@ -1,3 +1,3 @@
-import { createRollupConfigs } from '../../sources/index.mjs'
+import { createRollupConfigs } from '../../sources/_utils.mjs'
 
 export default createRollupConfigs()

@@ -34,7 +34,7 @@ jobs:
       - name: Install dependencies
         run: npm clean-install
       - name: Tests
-        run: npm run build && npm run lint && npm run tests:run
+        run: npm run lint && npm run tests:run
 
   publish:
     needs: test
@@ -53,7 +53,9 @@ jobs:
         run: npm clean-install
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
         run: npm audit signatures
+      - name: Pre-Release
+        run: npm run lint && npm run doc
       - name: Semantic Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run lint && npm run doc && npm run build && npx semantic-release
+        run: npx semantic-release
