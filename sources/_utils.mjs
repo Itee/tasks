@@ -36,7 +36,13 @@ const {
           cyan
       } = colors
 
-///
+/// Debugging
+
+const _processCwd = process.cwd()
+log(_processCwd)
+log(process.env)
+
+/// Package paths and data
 
 function _getPackageRootDirectory() {
 
@@ -63,7 +69,7 @@ const iteePackageConfigurationsDirectory = join( iteePackageRootDirectory, 'conf
 const iteePackageNodeModulesDirectory    = join( iteePackageRootDirectory, 'node_modules' )
 const iteePackageSourcesDirectory        = join( iteePackageRootDirectory, 'sources' )
 
-const packageRootDirectory                = iteePackageRootDirectory.includes( 'node_modules' ) ? join( iteePackageRootDirectory, '../../' ) : iteePackageRootDirectory
+const packageRootDirectory                = iteePackageRootDirectory.includes( 'node_modules' ) ? join( iteePackageRootDirectory, '../../../' ) : iteePackageRootDirectory
 const packageTasksDirectory               = join( packageRootDirectory, '.tasks' )
 const packageTasksConfigurationsDirectory = join( packageTasksDirectory, 'configs' )
 const packageNodeModulesDirectory         = join( packageRootDirectory, 'node_modules' )
