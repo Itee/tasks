@@ -33,12 +33,13 @@ const {
           yellow,
           blue,
           magenta,
-          cyan
+          cyan,
+          unstyle
       } = colors
 
 /// Debugging
-
-const isDebugging = ( process.env.RUNNER_DEBUG && process.env.RUNNER_DEBUG === '1' )
+/* global process */
+const isDebugging = ( process && process.env && process.env.RUNNER_DEBUG && process.env.RUNNER_DEBUG === '1' )
 
 /// Package paths and data
 
@@ -178,7 +179,7 @@ function createFile( filePath, fileContent ) {
 
 }
 
-function getFilesFrom( globPattern, filter = ( any ) => true ) {
+function getFilesFrom( globPattern, filter = ( /*any*/ ) => true ) {
 
     return glob.sync( globPattern )
                .map( filePath => normalize( filePath ) )
@@ -393,9 +394,15 @@ function computeBannerFor( format ) {
 
 }
 
-function computeIntroFor( requestPackages ) {
+function computeIntroFor( requestPackages = [] ) {
 
-    return ''
+    let intro = ''
+
+    for ( const requestPackage of requestPackages ) {
+        intro += `if( ${ requestPackage } === undefined ) { throw new Error('${ getPrettyPackageName() } need ${ requestPackage } to be defined first. Please check your scripts loading order.') }` + '\n'
+    }
+
+    return intro
 
 }
 
@@ -455,11 +462,11 @@ function createRollupConfigs( options = undefined ) {
             const outputPath = ( isProd ) ? join( output, `${ fileName }.min.${ extension }` ) : join( output, `${ fileName }.${ extension }` )
 
             configs.push( {
-                input:     input,
-                external:  ( format === 'cjs' ) ? [
+                input:    input,
+                external: ( format === 'cjs' ) ? [
                     'fs'
                 ] : [],
-                plugins:   [
+                plugins: [
                     replace( {
                         defines: {
                             IS_REMOVE_ON_BUILD:  false,
@@ -474,7 +481,7 @@ function createRollupConfigs( options = undefined ) {
                     } ),
                     isProd && terser()
                 ],
-                onwarn:    ( {
+                onwarn: ( {
                     loc,
                     frame,
                     message
@@ -484,11 +491,11 @@ function createRollupConfigs( options = undefined ) {
                     if ( message.includes( 'Circular dependency' ) ) { return }
                     if ( message.includes( 'plugin uglify is deprecated' ) ) { return }
 
-                    if ( loc ) {
-                        process.stderr.write( `/!\\ ${ loc.file } (${ loc.line }:${ loc.column }) ${ frame } ${ message }\n` )
-                    } else {
-                        process.stderr.write( `/!\\ ${ message }\n` )
-                    }
+                    let errorMessage = ( loc )
+                                       ? `/!\\ ${ loc.file } (${ loc.line }:${ loc.column }) ${ frame } ${ message }\n`
+                                       : `/!\\ ${ message }\n`
+
+                    log( red( errorMessage ) )
 
                 },
                 treeshake: treeshake,
@@ -539,7 +546,47 @@ function logLoadingTask( filename ) {
 
 }
 
-///
+/// Text Management
+
+
+function alignTextCenter( text, width ) {
+
+    const unstyledText = unstyle( text.repeat( 1 ) )
+    const marginLength = ( width - unstyledText.length ) / 2
+
+    let leftMargin, rightMargin
+    if ( Number.isInteger( marginLength ) ) {
+        leftMargin  = marginLength
+        rightMargin = marginLength
+    } else {
+        const flooredMargin = Math.floor( marginLength )
+        leftMargin          = flooredMargin
+        rightMargin         = flooredMargin + 1
+    }
+
+    return ' '.repeat( leftMargin ) + text + ' '.repeat( rightMargin )
+
+}
+
+function alignTextLeft( text, width ) {
+
+    const unstyledText = unstyle( text.repeat( 1 ) )
+    let repeatTime     = width - unstyledText.length
+    repeatTime         = ( repeatTime > 0 ) ? repeatTime : 0
+
+    return text + ' '.repeat( repeatTime )
+
+}
+
+function alignTextRight( text, width ) {
+
+    const unstyledText = unstyle( text.repeat( 1 ) )
+    let repeatTime     = width - unstyledText.length
+    repeatTime         = ( repeatTime > 0 ) ? repeatTime : 0
+
+    return ' '.repeat( repeatTime ) + text
+
+}
 
 function IndenterFactory( indentationChar = '\t', indentationLevel = 5 ) {
 
@@ -638,5 +685,8 @@ export {
 
     logLoadingTask,
 
+    alignTextCenter,
+    alignTextLeft,
+    alignTextRight,
     IndenterFactory as Indenter
 }

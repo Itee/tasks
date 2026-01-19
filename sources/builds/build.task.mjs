@@ -4,7 +4,7 @@ import { basename } from 'node:path'
 import { rollup }   from 'rollup'
 import {
     getTaskConfigurationFor,
-    logLoadingTask
+    logLoadingTask,
 }                   from '../_utils.mjs'
 
 logLoadingTask( import.meta.filename )

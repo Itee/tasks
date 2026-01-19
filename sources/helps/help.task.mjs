@@ -2,12 +2,14 @@ import colors from 'ansi-colors'
 import log    from 'fancy-log'
 import { basename } from 'node:path'
 import {
+    Indenter,
+    alignTextCenter,
+    alignTextLeft,
     getPrettyNodeVersion,
     getPrettyNpmVersion,
     getPrettyPackageName,
     getPrettyPackageVersion,
-    Indenter,
-    logLoadingTask
+    logLoadingTask,
 }             from '../_utils.mjs'
 
 logLoadingTask( import.meta.filename )
@@ -18,48 +20,8 @@ const {
           blue,
           cyan,
           yellow,
-          magenta,
-          unstyle
+          magenta
       } = colors
-
-function alignTextCenter( text, width ) {
-
-    const unstyledText = unstyle( text.repeat( 1 ) )
-    const marginLength = ( width - unstyledText.length ) / 2
-
-    let leftMargin, rightMargin
-    if ( Number.isInteger( marginLength ) ) {
-        leftMargin  = marginLength
-        rightMargin = marginLength
-    } else {
-        const flooredMargin = Math.floor( marginLength )
-        leftMargin          = flooredMargin
-        rightMargin         = flooredMargin + 1
-    }
-
-    return ' '.repeat( leftMargin ) + text + ' '.repeat( rightMargin )
-
-}
-
-function alignTextLeft( text, width ) {
-
-    const unstyledText = unstyle( text.repeat( 1 ) )
-    let repeatTime     = width - unstyledText.length
-    repeatTime         = ( repeatTime > 0 ) ? repeatTime : 0
-
-    return text + ' '.repeat( repeatTime )
-
-}
-
-function alignTextRight( text, width ) {
-
-    const unstyledText = unstyle( text.repeat( 1 ) )
-    let repeatTime     = width - unstyledText.length
-    repeatTime         = ( repeatTime > 0 ) ? repeatTime : 0
-
-    return ' '.repeat( repeatTime ) + text
-
-}
 
 /**
  * @method npm run help ( default )

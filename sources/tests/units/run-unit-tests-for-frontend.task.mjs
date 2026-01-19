@@ -13,16 +13,17 @@ const { red } = colors
 /**
  * @description Will run unit tests with web-test-runner
  */
-const runUnitTestsForFrontendTask       = () => {
-    return new Promise( async ( resolve, reject ) => {
+const runUnitTestsForFrontendTask       = async () => {
 
-        const configuration = await getTaskConfigurationFor( import.meta.filename )
-        const testRunner    = await startTestRunner( {
-            config:          configuration,
-            readCliArgs:     false,
-            readFileConfig:  false,
-            autoExitProcess: false,
-        } )
+    const configuration = await getTaskConfigurationFor( import.meta.filename )
+    const testRunner    = await startTestRunner( {
+        config:          configuration,
+        readCliArgs:     false,
+        readFileConfig:  false,
+        autoExitProcess: false,
+    } )
+
+    return new Promise( ( resolve, reject ) => {
 
         if ( !testRunner ) {
             reject( red( 'Internal test runner error.' ) )
@@ -40,6 +41,7 @@ const runUnitTestsForFrontendTask       = () => {
         } )
 
     } )
+
 }
 runUnitTestsForFrontendTask.displayName = basename( import.meta.filename, '.task.mjs' )
 runUnitTestsForFrontendTask.description = 'Will run unit tests with web-test-runner'

@@ -1,4 +1,3 @@
-import colors             from 'ansi-colors'
 import {
     readFileSync,
     writeFileSync
@@ -7,11 +6,6 @@ import { basename }       from 'node:path'
 import { logLoadingTask } from '../_utils.mjs'
 
 logLoadingTask( import.meta.filename )
-
-const {
-          green,
-          blue
-      } = colors
 
 /**
  * @method npm run patch

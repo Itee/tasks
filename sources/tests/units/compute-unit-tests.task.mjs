@@ -12,11 +12,11 @@ import {
     relative
 }                          from 'path'
 import {
+    Indenter,
     createDirectoryIfNotExist,
     createFile,
     getPrettyPackageName,
     getTaskConfigurationFor,
-    Indenter,
     logLoadingTask,
     packageName,
     packageNodeModulesDirectory,
