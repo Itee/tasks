@@ -1,3 +1,8 @@
+# [v1.3.0](https://github.com/Itee/tasks/compare/v1.2.1...v1.3.0) (2026-01-19)
+
+## ✨ New Features
+- [`ce7b1e6`](https://github.com/Itee/tasks/commit/ce7b1e6)  (lint) add new configurator system for lint config
+
 # [v1.2.1](https://github.com/Itee/tasks/compare/v1.2.0...v1.2.1) (2026-01-19)
 
 ## 🐛 Bug Fixes
