@@ -1,3 +1,9 @@
+# [v1.2.0](https://github.com/Itee/tasks/compare/v1.1.1...v1.2.0) (2026-01-19)
+
+## ✨ New Features
+- [`87d0a84`](https://github.com/Itee/tasks/commit/87d0a84)  (utils) allow to search for cjs config files 
+- [`fb38109`](https://github.com/Itee/tasks/commit/fb38109)  (tasks) reintroduce patch task to fix jsdoc config file available types
+
 # [v1.1.1](https://github.com/Itee/tasks/compare/v1.1.0...v1.1.1) (2026-01-15)
 
 # [v1.1.0](https://github.com/Itee/tasks/compare/v1.0.13...v1.1.0) (2026-01-15)
