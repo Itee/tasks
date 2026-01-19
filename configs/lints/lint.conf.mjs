@@ -51,7 +51,11 @@ class RulesSet {
 
 const sourceRulesSet = new RulesSet( {
     name:    'sources',
-    files:   [ 'sources/**/*.(js|cjs|mjs)' ],
+    files:   [
+        'sources/**/*.js',
+        'sources/**/*.cjs',
+        'sources/**/*.mjs',
+    ],
     ignores: [],
     plugins: { js },
     extends: [ 'js/recommended' ],
@@ -91,7 +95,11 @@ const sourceRulesSet = new RulesSet( {
 
 const sourceCommonRulesSet = new RulesSet( {
     name:    'sources/common',
-    files:   [ 'sources/common/**/*.(js|cjs|mjs)' ],
+    files:   [
+        'sources/common/**/*.js',
+        'sources/common/**/*.cjs',
+        'sources/common/**/*.mjs',
+    ],
     ignores: [],
     plugins: { js },
     extends: [ 'js/recommended' ],
@@ -131,7 +139,10 @@ const sourceCommonRulesSet = new RulesSet( {
 
 const sourceFrontendRulesSet = new RulesSet( {
     name:            'sources/frontend',
-    files:           [ 'sources/frontend/**/*.(js|mjs)' ],
+    files:           [
+        'sources/frontend/**/*.js',
+        'sources/frontend/**/*.mjs',
+    ],
     ignores:         [],
     plugins:         { js },
     extends:         [ 'js/recommended' ],
@@ -140,7 +151,11 @@ const sourceFrontendRulesSet = new RulesSet( {
 
 const sourceBackendRulesSet = new RulesSet( {
     name:            'sources/backend',
-    files:           [ 'sources/backend/**/*.(js|cjs)' ],
+    files:           [
+        'sources/frontend/**/*.js',
+        'sources/frontend/**/*.cjs',
+        'sources/frontend/**/*.mjs',
+    ],
     ignores:         [],
     plugins:         { js },
     extends:         [ 'js/recommended' ],
@@ -149,7 +164,11 @@ const sourceBackendRulesSet = new RulesSet( {
 
 const testBenchmarksRulesSet = new RulesSet( {
     name:            'tests/benchmarks',
-    files:           [ 'tests/benchmarks/**/*.(js|cjs|mjs)' ],
+    files:           [
+        'tests/benchmarks/**/*.js',
+        'tests/benchmarks/**/*.cjs',
+        'tests/benchmarks/**/*.mjs',
+    ],
     ignores:         [],
     plugins:         { js },
     extends:         [ 'js/recommended' ],
@@ -162,7 +181,11 @@ const testBenchmarksRulesSet = new RulesSet( {
 
 const testUnitsRulesSet = new RulesSet( {
     name:            'tests/units',
-    files:           [ 'tests/units/**/*.(js|cjs|mjs)' ],
+    files:           [
+        'tests/units/**/*.js',
+        'tests/units/**/*.cjs',
+        'tests/units/**/*.mjs',
+    ],
     ignores:         [],
     plugins:         { js },
     extends:         [ 'js/recommended' ],
@@ -175,7 +198,11 @@ const testUnitsRulesSet = new RulesSet( {
 } )
 
 const mochaRecommendedRulesSet = new RulesSet( {
-    files:   [ 'tests/units/**/*.(js|cjs|mjs)' ],
+    files:   [
+        'tests/units/**/*.js',
+        'tests/units/**/*.cjs',
+        'tests/units/**/*.mjs',
+    ],
     ignores: [],
     ...mocha.configs.recommended,
 } )
@@ -229,7 +256,12 @@ const defaultConfigurator = new Configurator( {
         reportUnusedDisableDirectives: 'error',
         reportUnusedInlineConfigs:     'error'
     },
-    rulesSets:     []
+    rulesSets:     [
+        sourceRulesSet,
+        testBenchmarksRulesSet,
+        testUnitsRulesSet,
+        mochaRecommendedRulesSet
+    ]
 } )
 
 const defaultConfiguration = defaultConfigurator.getConfig()

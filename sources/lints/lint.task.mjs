@@ -1,5 +1,5 @@
-import colors        from 'ansi-colors'
-import log           from 'fancy-log'
+import colors from 'ansi-colors'
+import log              from 'fancy-log'
 import child_process from 'node:child_process'
 import { basename }  from 'node:path'
 import { promisify } from 'node:util'
@@ -11,7 +11,7 @@ import {
 logLoadingTask( import.meta.filename )
 
 const execFile = promisify( child_process.execFile )
-const { red }  = colors
+const { red, cyan }  = colors
 
 /**
  * @method npm run lint
@@ -23,6 +23,7 @@ const lintTask       = async ( done ) => {
     try {
 
         const configurationPath = getTaskConfigurationPathFor( import.meta.filename )
+        log( `Loading configuration from ${ cyan( configurationPath ) }` )
 
         const { stdout } = await execFile( 'npx', [ 'eslint', '--config', configurationPath, '--fix' ] )
         if ( stdout !== '' ) {
