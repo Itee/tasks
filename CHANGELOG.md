@@ -1,3 +1,9 @@
+# [v1.3.1](https://github.com/Itee/tasks/compare/v1.3.0...v1.3.1) (2026-01-19)
+
+## 🐛 Bug Fixes
+- [`4a4d051`](https://github.com/Itee/tasks/commit/4a4d051)  (lint) fix lint conf files minimatch patterns and log 
+- [`46637b7`](https://github.com/Itee/tasks/commit/46637b7)  (lint) apply global lint fix
+
 # [v1.3.0](https://github.com/Itee/tasks/compare/v1.2.1...v1.3.0) (2026-01-19)
 
 ## ✨ New Features
