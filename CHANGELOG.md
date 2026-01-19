@@ -1,3 +1,8 @@
+# [v1.2.1](https://github.com/Itee/tasks/compare/v1.2.0...v1.2.1) (2026-01-19)
+
+## 🐛 Bug Fixes
+- [`d23b590`](https://github.com/Itee/tasks/commit/d23b590)  (package) try to auto-refresh gulp tasks before apply auto-patch on package install
+
 # [v1.2.0](https://github.com/Itee/tasks/compare/v1.1.1...v1.2.0) (2026-01-19)
 
 ## ✨ New Features
