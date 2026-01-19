@@ -1,11 +1,12 @@
-import colors                   from 'ansi-colors'
-import log                      from 'fancy-log'
+import colors             from 'ansi-colors'
 import {
     readFileSync,
     writeFileSync
-}                               from 'node:fs'
-import { relative }             from 'node:path'
-import { packageRootDirectory } from '../_utils.mjs'
+}                         from 'node:fs'
+import { basename }       from 'node:path'
+import { logLoadingTask } from '../_utils.mjs'
+
+logLoadingTask( import.meta.filename )
 
 const {
           green,
@@ -36,10 +37,8 @@ const patchTask       = ( done ) => {
 
     done()
 }
-patchTask.displayName = 'patch'
+patchTask.displayName = basename( import.meta.filename, '.task.mjs' )
 patchTask.description = 'Will apply some patch/replacements in dependencies'
 patchTask.flags       = null
-
-log( 'Loading ', green( relative( packageRootDirectory, import.meta.filename ) ), `with task ${ blue( patchTask.displayName ) }` )
 
 export { patchTask }
