@@ -1,6 +1,6 @@
 import nodeResolve     from '@rollup/plugin-node-resolve'
 import cleanup         from 'rollup-plugin-cleanup'
-import { packageName } from '../../../sources/index.mjs'
+import { packageName } from '../../index.mjs'
 
 export default {
     ignoredFiles: [
@@ -8,13 +8,10 @@ export default {
     ],
     buildOptions: {
         input:     null,
-        external:  [ '' ],
         plugins:   [
-            nodeResolve( {
-                preferBuiltins: true
-            } ),
+            nodeResolve(),
             cleanup( {
-                comments: 'none'
+                comments: 'all' // else remove __PURE__ declaration... -_-'
             } )
         ],
         onwarn:    ( {

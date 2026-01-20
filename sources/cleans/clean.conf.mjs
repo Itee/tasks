@@ -4,7 +4,7 @@ import {
     packageTestsBenchmarksDirectory,
     packageTestsBundlesDirectory,
     packageTestsUnitsDirectory,
-} from '../../sources/_utils.mjs'
+} from '../_utils.mjs'
 
 export default [
     packageBuildsDirectory,

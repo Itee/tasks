@@ -64,7 +64,6 @@ function _getPackageRootDirectory() {
 
 const iteePackageRootDirectory           = _getPackageRootDirectory()
 const iteePackageJsonPath                = join( iteePackageRootDirectory, 'package.json' )
-const iteePackageConfigurationsDirectory = join( iteePackageRootDirectory, 'configs' )
 const iteePackageNodeModulesDirectory    = join( iteePackageRootDirectory, 'node_modules' )
 const iteePackageSourcesDirectory        = join( iteePackageRootDirectory, 'sources' )
 
@@ -265,7 +264,7 @@ function getTaskConfigurationPathFor( filename ) {
     for ( const replaceValue of replaceValues ) {
         const configurationLocation    = relativeTaskPath.replace( searchValue, replaceValue )
         const packageConfigurationPath = join( packageTasksConfigurationsDirectory, configurationLocation )
-        const defaultConfigurationPath = join( iteePackageConfigurationsDirectory, configurationLocation )
+        const defaultConfigurationPath = join( iteePackageSourcesDirectory, configurationLocation )
 
         packageConfigurationPaths.push( packageConfigurationPath )
         defaultConfigurationPaths.push( defaultConfigurationPath )
@@ -632,7 +631,6 @@ class Indenter {
 export {
     iteePackageRootDirectory,
     iteePackageJsonPath,
-    iteePackageConfigurationsDirectory,
     iteePackageNodeModulesDirectory,
     iteePackageSourcesDirectory,
 

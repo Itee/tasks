@@ -1,7 +1,7 @@
 import {
     getPrettyPackageName,
     getPrettyPackageVersion
-} from '../../sources/_utils.mjs'
+} from '../_utils.mjs'
 
 export default {
     tags:         {
