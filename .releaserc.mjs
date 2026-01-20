@@ -59,7 +59,7 @@ function getGitPlugin() {
             'assets':  [
                 'builds/**', 'docs/**', 'package.json', 'CHANGELOG.md'
             ],
-            'message': ':bookmark: chore(release): v${nextRelease.version}'
+            'message': ':bookmark: (release) v${nextRelease.version}'
         }
     ]
 }
