@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>@itee/tasks v1.2.1 Source: helps/help.task.mjs</title>
+	<title>@itee/tasks v1.3.0 Source: helps/help.task.mjs</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -20,7 +20,7 @@
 <div class="navbar navbar-default navbar-fixed-top ">
 <div class="container">
 	<div class="navbar-header">
-		<a class="navbar-brand" href="index.html">@itee/tasks v1.2.1</a>
+		<a class="navbar-brand" href="index.html">@itee/tasks v1.3.0</a>
 		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
@@ -74,12 +74,14 @@
 import log    from 'fancy-log'
 import { basename } from 'node:path'
 import {
+    Indenter,
+    alignTextCenter,
+    alignTextLeft,
     getPrettyNodeVersion,
     getPrettyNpmVersion,
     getPrettyPackageName,
     getPrettyPackageVersion,
-    Indenter,
-    logLoadingTask
+    logLoadingTask,
 }             from '../_utils.mjs'
 
 logLoadingTask( import.meta.filename )
@@ -90,48 +92,8 @@ const {
           blue,
           cyan,
           yellow,
-          magenta,
-          unstyle
+          magenta
       } = colors
-
-function alignTextCenter( text, width ) {
-
-    const unstyledText = unstyle( text.repeat( 1 ) )
-    const marginLength = ( width - unstyledText.length ) / 2
-
-    let leftMargin, rightMargin
-    if ( Number.isInteger( marginLength ) ) {
-        leftMargin  = marginLength
-        rightMargin = marginLength
-    } else {
-        const flooredMargin = Math.floor( marginLength )
-        leftMargin          = flooredMargin
-        rightMargin         = flooredMargin + 1
-    }
-
-    return ' '.repeat( leftMargin ) + text + ' '.repeat( rightMargin )
-
-}
-
-function alignTextLeft( text, width ) {
-
-    const unstyledText = unstyle( text.repeat( 1 ) )
-    let repeatTime     = width - unstyledText.length
-    repeatTime         = ( repeatTime > 0 ) ? repeatTime : 0
-
-    return text + ' '.repeat( repeatTime )
-
-}
-
-function alignTextRight( text, width ) {
-
-    const unstyledText = unstyle( text.repeat( 1 ) )
-    let repeatTime     = width - unstyledText.length
-    repeatTime         = ( repeatTime > 0 ) ? repeatTime : 0
-
-    return ' '.repeat( repeatTime ) + text
-
-}
 
 /**
  * @method npm run help ( default )
