@@ -5,15 +5,15 @@ import {
 } from '../_utils.mjs'
 
 export default {
-    tags:         {
+    tags: {
         allowUnknownTags: false,
         dictionaries:     [
             'jsdoc',
             'closure'
         ]
     },
-    source:       {
-        include:        [
+    source: {
+        include: [
             'README.md',
             'gulpfile.mjs',
             './sources'
@@ -35,7 +35,7 @@ export default {
         verbose:     true,
         private:     true
     },
-    templates:    {
+    templates: {
         cleverLinks:       false,
         monospaceLinks:    false,
         navType:           'inline',
