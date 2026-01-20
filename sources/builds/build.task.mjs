@@ -46,7 +46,7 @@ const buildTask       = async ( done ) => {
 
 }
 buildTask.displayName = basename( import.meta.filename, '.task.mjs' )
-buildTask.description = 'Todo...'
+buildTask.description = 'Will generate build package files based on input config.'
 buildTask.flags       = null
 
 export { buildTask }
