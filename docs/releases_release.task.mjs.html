@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>@itee/tasks v1.3.0 Source: releases/release.task.mjs</title>
+	<title>Itee Tasks v1.3.1 Source: releases/release.task.mjs</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -20,7 +20,7 @@
 <div class="navbar navbar-default navbar-fixed-top ">
 <div class="container">
 	<div class="navbar-header">
-		<a class="navbar-brand" href="index.html">@itee/tasks v1.3.0</a>
+		<a class="navbar-brand" href="index.html">Itee Tasks v1.3.1</a>
 		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
@@ -33,7 +33,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="global.html#checkBundlingFromEsmFilesDirectTask">checkBundlingFromEsmFilesDirectTask</a></li><li><a href="global.html#checkBundlingTask">checkBundlingTask</a></li><li><a href="global.html#computeBenchmarksTask">computeBenchmarksTask</a></li><li><a href="global.html#computeUnitTestsTask">computeUnitTestsTask</a></li><li><a href="global.html#createRollupConfigs">createRollupConfigs</a></li><li><a href="global.html#npmrunclean">npm run clean</a></li><li><a href="global.html#npmrunhelpdefault">npm run help ( default )</a></li><li><a href="global.html#npmrunlint">npm run lint</a></li><li><a href="global.html#npmrunpatch">npm run patch</a></li><li><a href="global.html#npmrunrelease">npm run release</a></li><li><a href="global.html#npmruntest">npm run test</a></li><li><a href="global.html#runBenchmarksForBackendTask">runBenchmarksForBackendTask</a></li><li><a href="global.html#runBenchmarksForFrontendTask">runBenchmarksForFrontendTask</a></li><li><a href="global.html#runUnitTestsForBackendTask">runUnitTestsForBackendTask</a></li><li><a href="global.html#runUnitTestsForFrontendTask">runUnitTestsForFrontendTask</a></li>
+					<li><a href="global.html#checkBundlingFromEsmFilesDirectTask">checkBundlingFromEsmFilesDirectTask</a></li><li><a href="global.html#checkBundlingTask">checkBundlingTask</a></li><li><a href="global.html#computeBenchmarksTask">computeBenchmarksTask</a></li><li><a href="global.html#computeUnitTestsTask">computeUnitTestsTask</a></li><li><a href="global.html#npmrunclean">npm run clean</a></li><li><a href="global.html#npmrunhelpdefault">npm run help ( default )</a></li><li><a href="global.html#npmrunlint">npm run lint</a></li><li><a href="global.html#npmrunpatch">npm run patch</a></li><li><a href="global.html#npmrunrelease">npm run release</a></li><li><a href="global.html#npmruntest">npm run test</a></li><li><a href="global.html#runBenchmarksForBackendTask">runBenchmarksForBackendTask</a></li><li><a href="global.html#runBenchmarksForFrontendTask">runBenchmarksForFrontendTask</a></li><li><a href="global.html#runUnitTestsForBackendTask">runUnitTestsForBackendTask</a></li><li><a href="global.html#runUnitTestsForFrontendTask">runUnitTestsForFrontendTask</a></li>
 				</ul>
 			</li>
 			
@@ -72,7 +72,6 @@
         <pre
             class="sunlight-highlight-javascript linenums">import { series }                from 'gulp'
 import { basename }              from 'node:path'
-import { logLoadingTask }        from '../_utils.mjs'
 import { buildTask }             from '../builds/build.task.mjs'
 import { cleanTask }             from '../cleans/clean.task.mjs'
 import { docTask }               from '../docs/doc.task.mjs'
@@ -80,6 +79,7 @@ import { lintTask }              from '../lints/lint.task.mjs'
 import { computeBenchmarksTask } from '../tests/benchmarks/compute-benchmarks.task.mjs'
 import { runTestsTask }          from '../tests/run-tests.task.mjs'
 import { computeUnitTestsTask }  from '../tests/units/compute-unit-tests.task.mjs'
+import { logLoadingTask }        from '../utils/loggings.mjs'
 
 logLoadingTask( import.meta.filename )
 
@@ -140,7 +140,7 @@ export { releaseTask }</pre>
 
 
 	<span class="copyright">
-	Copyright 2015-Present <a href="https://github.com/Itee">Itee</a> (Tristan Valcke)
+	Copyright 2015-Present <a href="https://github.com/Itee">Itee (Tristan Valcke)</a>
 	</span>
 
 <span class="jsdoc-message">
