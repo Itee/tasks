@@ -1,4 +1,3 @@
-import commonjs                   from '@rollup/plugin-commonjs'
 import nodeResolve                from '@rollup/plugin-node-resolve'
 import cleanup                    from 'rollup-plugin-cleanup'
 import { red }                    from '../../utils/colors.mjs'
