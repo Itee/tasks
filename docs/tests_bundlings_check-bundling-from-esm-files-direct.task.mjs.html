@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>@itee/tasks v1.3.0 Source: tests/bundlings/check-bundling-from-esm-files-direct.task.mjs</title>
+	<title>Itee Tasks v1.3.1 Source: tests/bundlings/check-bundling-from-esm-files-direct.task.mjs</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -20,7 +20,7 @@
 <div class="navbar navbar-default navbar-fixed-top ">
 <div class="container">
 	<div class="navbar-header">
-		<a class="navbar-brand" href="index.html">@itee/tasks v1.3.0</a>
+		<a class="navbar-brand" href="index.html">Itee Tasks v1.3.1</a>
 		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
@@ -33,7 +33,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="global.html#checkBundlingFromEsmFilesDirectTask">checkBundlingFromEsmFilesDirectTask</a></li><li><a href="global.html#checkBundlingTask">checkBundlingTask</a></li><li><a href="global.html#computeBenchmarksTask">computeBenchmarksTask</a></li><li><a href="global.html#computeUnitTestsTask">computeUnitTestsTask</a></li><li><a href="global.html#createRollupConfigs">createRollupConfigs</a></li><li><a href="global.html#npmrunclean">npm run clean</a></li><li><a href="global.html#npmrunhelpdefault">npm run help ( default )</a></li><li><a href="global.html#npmrunlint">npm run lint</a></li><li><a href="global.html#npmrunpatch">npm run patch</a></li><li><a href="global.html#npmrunrelease">npm run release</a></li><li><a href="global.html#npmruntest">npm run test</a></li><li><a href="global.html#runBenchmarksForBackendTask">runBenchmarksForBackendTask</a></li><li><a href="global.html#runBenchmarksForFrontendTask">runBenchmarksForFrontendTask</a></li><li><a href="global.html#runUnitTestsForBackendTask">runUnitTestsForBackendTask</a></li><li><a href="global.html#runUnitTestsForFrontendTask">runUnitTestsForFrontendTask</a></li>
+					<li><a href="global.html#checkBundlingFromEsmFilesDirectTask">checkBundlingFromEsmFilesDirectTask</a></li><li><a href="global.html#checkBundlingTask">checkBundlingTask</a></li><li><a href="global.html#computeBenchmarksTask">computeBenchmarksTask</a></li><li><a href="global.html#computeUnitTestsTask">computeUnitTestsTask</a></li><li><a href="global.html#npmrunclean">npm run clean</a></li><li><a href="global.html#npmrunhelpdefault">npm run help ( default )</a></li><li><a href="global.html#npmrunlint">npm run lint</a></li><li><a href="global.html#npmrunpatch">npm run patch</a></li><li><a href="global.html#npmrunrelease">npm run release</a></li><li><a href="global.html#npmruntest">npm run test</a></li><li><a href="global.html#runBenchmarksForBackendTask">runBenchmarksForBackendTask</a></li><li><a href="global.html#runBenchmarksForFrontendTask">runBenchmarksForFrontendTask</a></li><li><a href="global.html#runUnitTestsForBackendTask">runUnitTestsForBackendTask</a></li><li><a href="global.html#runUnitTestsForFrontendTask">runUnitTestsForFrontendTask</a></li>
 				</ul>
 			</li>
 			
@@ -70,35 +70,34 @@
 <section>
     <article>
         <pre
-            class="sunlight-highlight-javascript linenums">import colors     from 'ansi-colors'
-import log        from 'fancy-log'
-import {
+            class="sunlight-highlight-javascript linenums">import {
     existsSync,
     rmSync
-}                 from 'fs'
-import { glob }   from 'glob'
+}                                   from 'node:fs'
 import {
     basename,
     dirname,
     extname,
-    join,
-    normalize
-}                 from 'path'
-import { rollup } from 'rollup'
+    join
+}                                   from 'node:path'
+import { rollup }                   from 'rollup'
 import {
-    getTaskConfigurationFor,
-    logLoadingTask,
+    green,
+    magenta,
+    red,
+}                                   from '../../utils/colors.mjs'
+import { getJavascriptSourceFiles } from '../../utils/files.mjs'
+import {
+    log,
+    logLoadingTask
+}                                   from '../../utils/loggings.mjs'
+import {
     packageSourcesDirectory,
     packageTestsBundlesDirectory
-}                 from '../../_utils.mjs'
+}                                   from '../../utils/packages.mjs'
+import { getTaskConfigurationFor }  from '../../utils/tasks.mjs'
 
 logLoadingTask( import.meta.filename )
-
-const {
-          red,
-          green,
-          magenta,
-      } = colors
 
 /**
  * @description In view to detect bundling side effects this task will
@@ -115,18 +114,7 @@ const checkBundlingFromEsmFilesDirectTask       = async ( done ) => {
     }
 
     const configuration = await getTaskConfigurationFor( import.meta.filename )
-
-    // Get source files to process
-    const pattern     = join( packageSourcesDirectory, '**' )
-    const sourceFiles = glob.sync( pattern )
-                            .map( filePath => normalize( filePath ) )
-                            .filter( filePath => {
-                                const fileName         = basename( filePath )
-                                const isJsFile         = fileName.endsWith( '.js' )
-                                const isNotPrivateFile = !fileName.startsWith( '_' )
-                                const isNotIgnoredFile = !configuration.ignoredFiles.includes( fileName )
-                                return isJsFile &amp;&amp; isNotPrivateFile &amp;&amp; isNotIgnoredFile
-                            } )
+    const sourceFiles   = getJavascriptSourceFiles( configuration )
 
     for ( let sourceFile of sourceFiles ) {
 
@@ -202,7 +190,7 @@ export { checkBundlingFromEsmFilesDirectTask }</pre>
 
 
 	<span class="copyright">
-	Copyright 2015-Present <a href="https://github.com/Itee">Itee</a> (Tristan Valcke)
+	Copyright 2015-Present <a href="https://github.com/Itee">Itee (Tristan Valcke)</a>
 	</span>
 
 <span class="jsdoc-message">

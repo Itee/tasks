@@ -1,3 +1,11 @@
+# [v1.3.2](https://github.com/Itee/tasks/compare/v1.3.1...v1.3.2) (2026-01-21)
+
+## 🐛 Bug Fixes
+- [`f96018d`](https://github.com/Itee/tasks/commit/f96018d)  (lint) fix config files lint errors 
+- [`0e0fecf`](https://github.com/Itee/tasks/commit/0e0fecf)  (patch) add patch against default jsdoc conf to allow mjs and cjs files by default 
+- [`c78ba79`](https://github.com/Itee/tasks/commit/c78ba79)  (bundling) add some missing imports 
+- [`83ec8b2`](https://github.com/Itee/tasks/commit/83ec8b2)  (compute) fix unmanaged composed filename to compute benches and units
+
 # [v1.3.1](https://github.com/Itee/tasks/compare/v1.3.0...v1.3.1) (2026-01-19)
 
 ## 🐛 Bug Fixes
