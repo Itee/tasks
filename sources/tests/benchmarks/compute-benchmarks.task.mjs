@@ -21,10 +21,10 @@ import {
 }                                  from '../../utils/loggings.mjs'
 import {
     getUnscopedPackageName,
+    iteePackageSourcesDirectory,
     packageNodeModulesDirectory,
     packageSourcesDirectory,
-    packageTestsBenchmarksDirectory,
-    packageTestsDirectory
+    packageTestsBenchmarksDirectory
 }                                  from '../../utils/packages.mjs'
 import { getTaskConfigurationFor } from '../../utils/tasks.mjs'
 import { toCamelCase }             from '../../utils/texts.mjs'
@@ -82,18 +82,17 @@ const computeBenchmarksTask       = async ( done ) => {
                     return false
                 }
 
-                // We don't care that data bloc have comment they are unused to generate benchmarks
-                // const undocumented = data.undocumented
-                // if ( undocumented ) {
-                //     return false
-                // }
-
                 const scope = data.scope
                 if ( ![ 'global', 'static' ].includes( scope ) ) {
                     return false
                 }
 
-                if ( longName.includes( ' ' ) || longName.includes( '~' ) || usedLongnames.includes( longName ) ) {
+                if ( longName.startsWith( '_' ) || longName.includes( ' ' ) || longName.includes( '~' ) || usedLongnames.includes( longName ) ) {
+                    return false
+                }
+
+                const memberOf = data.memberof || ''
+                if ( memberOf.includes( '.' ) ) {
                     return false
                 }
 
@@ -153,9 +152,9 @@ const computeBenchmarksTask       = async ( done ) => {
             }
 
             // compute relative level to get import wrappers
-            const wrapperDirPath          = relative( benchDirPath, packageTestsDirectory )
-            const importBenchmarkFilePath = join( wrapperDirPath, 'import.benchmarks.js' )
-            const importTestingFilePath   = join( wrapperDirPath, 'import.testing.js' )
+            const wrapperDirPath          = relative( benchDirPath, iteePackageSourcesDirectory )
+            const importBenchmarkFilePath = join( wrapperDirPath, 'utils', 'benchmarks.js' )
+            const importTestingFilePath   = join( wrapperDirPath, 'utils', 'testing.js' )
 
             const template = '' +
                 `import * as ${ nsName } from '${ importFilePath }'` + '\n' +

@@ -1,5 +1,11 @@
 import { unstyle } from './colors.mjs'
 
+/**
+ *
+ * @param {string} text
+ * @param {number} width
+ * @returns {string}
+ */
 function alignTextCenter( text, width ) {
 
     const unstyledText = unstyle( text.repeat( 1 ) )
@@ -19,6 +25,12 @@ function alignTextCenter( text, width ) {
 
 }
 
+/**
+ *
+ * @param {string} text
+ * @param {number} width
+ * @returns {string}
+ */
 function alignTextLeft( text, width ) {
 
     const unstyledText = unstyle( text.repeat( 1 ) )
@@ -29,6 +41,12 @@ function alignTextLeft( text, width ) {
 
 }
 
+/**
+ *
+ * @param {string} text
+ * @param {number} width
+ * @returns {string}
+ */
 function alignTextRight( text, width ) {
 
     const unstyledText = unstyle( text.repeat( 1 ) )
@@ -55,7 +73,13 @@ function IndenterFactory( indentationChar = '\t', indentationLevel = 5 ) {
 
 }
 
+/**
+ * @param {string} string
+ * @returns {string}
+ */
 function toCamelCase( string ) {
+
+    if(typeof string !== 'string') throw new TypeError(`Invalid type '${typeof string}' expect string.`)
 
     return string
         .trim()

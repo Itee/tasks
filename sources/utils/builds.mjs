@@ -73,16 +73,14 @@ function computeBannerFor( format ) {
     const packageName    = getPrettyPackageName( '.' )
     const packageVersion = getPrettyPackageVersion()
     const prettyFormat   = getPrettyFormatForBanner( format )
-
-    const figText = figlet.textSync(
-        `${ packageName } ${ packageVersion } - ${ prettyFormat }`,
-        {
-            font:             'Tmplr',
-            horizontalLayout: 'default',
-            verticalLayout:   'default',
-            whitespaceBreak:  true,
-        }
-    )
+    const figletText     = `${ packageName } ${ packageVersion } - ${ prettyFormat }`
+    const figletOptions  = {
+        font:             'Tmplr',
+        horizontalLayout: 'default',
+        verticalLayout:   'default',
+        whitespaceBreak:  true,
+    }
+    const figText        = figlet.textSync( figletText, figletOptions )
 
     return convertBannerIntoComment( figText )
 
@@ -146,19 +144,15 @@ function createRollupConfigs( options = {} ) {
 
     const configs = []
 
-    for ( let formatIndex = 0, numberOfFormats = formats.length ; formatIndex < numberOfFormats ; ++formatIndex ) {
+    for ( const format of formats ) {
+        for ( const env of envs ) {
 
-        for ( let envIndex = 0, numberOfEnvs = envs.length ; envIndex < numberOfEnvs ; envIndex++ ) {
-
-            const env        = envs[ envIndex ]
             const isProd     = ( env.includes( 'prod' ) )
-            const format     = formats[ formatIndex ]
             const extension  = getOutputFileExtensionBasedOnFileFormat( format )
             const outputPath = ( isProd )
                                ? join( output, `${ fileName }.min.${ extension }` )
                                : join( output, `${ fileName }.${ extension }` )
-
-            configs.push( {
+            const config = {
                 input:    input,
                 external: ( format === 'cjs' ) ? [
                     'fs'
@@ -218,10 +212,10 @@ function createRollupConfigs( options = {} ) {
                     indent:  '\t',
                     strict:  true
                 }
-            } )
+            }
 
+            configs.push(config)
         }
-
     }
 
     return configs

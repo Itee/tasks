@@ -23,10 +23,11 @@ import {
 import {
     getPrettyPackageName,
     getUnscopedPackageName,
+    iteePackageSourcesDirectory,
     packageNodeModulesDirectory,
     packageSourcesDirectory,
     packageTestsUnitsDirectory
-}                                  from '../../utils/packages.mjs'
+} from '../../utils/packages.mjs'
 import { getTaskConfigurationFor } from '../../utils/tasks.mjs'
 import {
     Indenter,
@@ -473,10 +474,16 @@ const computeUnitTestsTask       = async ( done ) => {
 
             }
 
+            const wrapperDirPath          = relative( unitDirPath, iteePackageSourcesDirectory )
+            const importTestingFilePath   = join( wrapperDirPath, 'utils', 'testing.js' )
+
             const template = '' +
                 `import { expect }       from 'chai'` + '\n' +
-                `import { Testing }      from 'itee-utils/sources/testings/benchmarks.js'` + '\n' +
+                `import { getTestingPackage } from '${ importTestingFilePath }'` + '\n' +
+                // `import { Testing }      from 'itee-utils/sources/testings/benchmarks.js'` + '\n' +
                 `import * as ${ nsName } from '${ importFilePath }'` + '\n' +
+                '\n' +
+                `const Testing   = await getTestingPackage()` + '\n' +
                 '\n' +
                 `describe( '${ unitName }', function () {` + '\n' +
                 '\n' +
