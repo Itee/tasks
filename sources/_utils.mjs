@@ -86,18 +86,30 @@ const packageJsonPath                     = join( packageRootDirectory, 'package
 
 ///
 
-const packageJson        = getJsonFrom( packageJsonPath )
-const packageName        = packageJson.name
-const packageVersion     = packageJson.version
-const packageDescription = packageJson.description
-const packageAuthor      = packageJson.author
-const packageLicense     = packageJson.license
+const packageJson           = getJsonFrom( packageJsonPath )
+const packageName           = packageJson.name
+const packageVersion        = packageJson.version
+const packageDescription    = packageJson.description
+const packageAuthor         = packageJson.author
+const packageLicense        = packageJson.license
+const packageMain = packageJson.main
+
+function getUnscopedPackageName() {
+
+    return packageName.startsWith( '@' )
+           ? packageName.split( '/' )[1]
+           : packageName.split( '-' )[1]
+
+}
 
 function getPrettyPackageName( separator = ' ' ) {
 
     let prettyPackageName = ''
 
-    const nameSplits = packageName.split( '-' )
+    const nameSplits = packageName.startsWith( '@' )
+                       ? packageName.slice( 1 ).split( '/' )
+                       : packageName.split( '-' )
+
     for ( const nameSplit of nameSplits ) {
         prettyPackageName += nameSplit.charAt( 0 ).toUpperCase() + nameSplit.slice( 1 ) + separator
     }
@@ -431,7 +443,7 @@ function getOutputFileExtensionBasedOnFileFormat( format ) {
 function createRollupConfigs( options = undefined ) {
 
     const _options = options ? options : {
-        input:     join( packageSourcesDirectory, `${ packageName }.js` ),
+        input:     join( packageSourcesDirectory, `${ getUnscopedPackageName() }.js` ),
         output:    packageBuildsDirectory,
         formats:   [ 'esm', 'cjs', 'iife' ],
         envs:      [ 'dev', 'prod' ],
@@ -657,6 +669,8 @@ export {
     packageDescription,
     packageAuthor,
     packageLicense,
+    packageMain,
+    getUnscopedPackageName,
     getPrettyPackageName,
     getPrettyPackageVersion,
     getPrettyNodeVersion,
