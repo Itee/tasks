@@ -15,6 +15,9 @@ export default {
         input:    null,
         external: [ '' ],
         plugins:  [
+            commonjs( {
+                include: 'node_modules/**'
+            } ),
             nodeResolve( {
                 preferBuiltins: true
             } ),
