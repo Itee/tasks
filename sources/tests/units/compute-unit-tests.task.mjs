@@ -1,4 +1,3 @@
-import { glob }                    from 'glob'
 import { isNotEmptyArray }         from 'itee-validators'
 import childProcess                from 'node:child_process'
 import {
@@ -6,7 +5,6 @@ import {
     dirname,
     extname,
     join,
-    normalize,
     relative
 }                                  from 'node:path'
 import {
@@ -15,8 +13,9 @@ import {
 }                                  from '../../utils/colors.mjs'
 import {
     createDirectoryIfNotExist,
-    createFile
-}                                  from '../../utils/files.mjs'
+    createFile,
+    getJavascriptSourceFiles
+} from '../../utils/files.mjs'
 import {
     log,
     logLoadingTask
@@ -40,20 +39,8 @@ const computeUnitTestsTask       = async ( done ) => {
 
     createDirectoryIfNotExist( packageTestsUnitsDirectory )
 
-    // Get task configuration
     const filePathsToIgnore = await getTaskConfigurationFor( import.meta.filename )
-
-    // Get source files to process
-    const pattern     = join( packageSourcesDirectory, '**' )
-    const sourceFiles = glob.sync( pattern )
-                            .map( filePath => normalize( filePath ) )
-                            .filter( filePath => {
-                                const fileName         = basename( filePath )
-                                const isJsFile         = [ '.js', '.mjs', '.cjs' ].includes( extname( fileName ) )
-                                const isNotPrivateFile = !fileName.startsWith( '_' )
-                                const isNotIgnoredFile = !filePathsToIgnore.includes( fileName )
-                                return isJsFile && isNotPrivateFile && isNotIgnoredFile
-                            } )
+    const sourceFiles       = getJavascriptSourceFiles( filePathsToIgnore )
 
     const unitsImportMap = []
     for ( let sourceFile of sourceFiles ) {

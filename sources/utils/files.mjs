@@ -1,13 +1,19 @@
-import { glob }      from 'glob'
+import { glob }                    from 'glob'
 import {
     existsSync,
     mkdirSync,
     readFileSync,
     writeFileSync
-}                    from 'node:fs'
-import { normalize } from 'node:path'
-import { log }       from './loggings.mjs'
-import { green }     from './colors.mjs'
+}                                  from 'node:fs'
+import {
+    basename,
+    extname,
+    join,
+    normalize
+}                                  from 'node:path'
+import { green }                   from './colors.mjs'
+import { log }                     from './loggings.mjs'
+import { packageSourcesDirectory } from './packages.mjs'
 
 function createDirectoryIfNotExist( directoryPath ) {
 
@@ -41,10 +47,24 @@ function getFilesFrom( globPattern, filter = ( /*any*/ ) => true ) {
 
 }
 
+function getJavascriptSourceFiles( filePathsToIgnore = [] ) {
+
+    return glob.sync( join( packageSourcesDirectory, '**' ) )
+               .map( filePath => normalize( filePath ) )
+               .filter( filePath => {
+                   const fileName         = basename( filePath )
+                   const isJsFile         = [ '.js', '.mjs', '.cjs' ].includes( extname( fileName ) )
+                   const isNotPrivateFile = !fileName.startsWith( '_' )
+                   const isNotIgnoredFile = !filePathsToIgnore.includes( fileName )
+                   return isJsFile && isNotPrivateFile && isNotIgnoredFile
+               } )
+
+}
 
 export {
     createDirectoryIfNotExist,
     getJsonFrom,
     createFile,
     getFilesFrom,
+    getJavascriptSourceFiles
 }

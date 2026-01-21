@@ -1,11 +1,9 @@
-import { glob }                    from 'glob'
 import childProcess                from 'node:child_process'
 import {
     basename,
     dirname,
     extname,
     join,
-    normalize,
     relative
 }                                  from 'node:path'
 import {
@@ -15,6 +13,7 @@ import {
 import {
     createDirectoryIfNotExist,
     createFile,
+    getJavascriptSourceFiles,
 }                                  from '../../utils/files.mjs'
 import {
     log,
@@ -40,18 +39,7 @@ const computeBenchmarksTask       = async ( done ) => {
 
     // Get task configuration
     const filePathsToIgnore = await getTaskConfigurationFor( import.meta.filename )
-
-    // Get source files to process
-    const pattern     = join( packageSourcesDirectory, '**' )
-    const sourceFiles = glob.sync( pattern )
-                            .map( filePath => normalize( filePath ) )
-                            .filter( filePath => {
-                                const fileName         = basename( filePath )
-                                const isJsFile         = [ '.js', '.mjs', '.cjs' ].includes( extname( fileName ) )
-                                const isNotPrivateFile = !fileName.startsWith( '_' )
-                                const isNotIgnoredFile = !filePathsToIgnore.includes( fileName )
-                                return isJsFile && isNotPrivateFile && isNotIgnoredFile
-                            } )
+    const sourceFiles       = getJavascriptSourceFiles( filePathsToIgnore )
 
     const benchRootImports = []
     for ( let sourceFile of sourceFiles ) {
