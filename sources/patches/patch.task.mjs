@@ -28,6 +28,14 @@ const patchTask       = ( done ) => {
         const patchedFileContent = fileContent.replace( searchValue, replaceValue )
         writeFileSync( jsdocFilePath, patchedFileContent )
     }
+    {
+        const jsdocFilePath      = 'node_modules/jsdoc/conf.json.EXAMPLE'
+        const searchValue        = '.js(doc|x)?'
+        const replaceValue       = '.(js|mjs|cjs|jsdoc|jsx)?'
+        const fileContent        = readFileSync( jsdocFilePath ).toString()
+        const patchedFileContent = fileContent.replace( searchValue, replaceValue )
+        writeFileSync( jsdocFilePath, patchedFileContent )
+    }
 
     done()
 }
