@@ -1,27 +1,29 @@
-import colors         from 'ansi-colors'
-import log            from 'fancy-log'
-import { existsSync } from 'fs'
-import { basename }   from 'node:path'
-import { join }       from 'path'
+import { existsSync } from 'node:fs'
 import {
-    logLoadingTask,
-    packageName,
+    basename,
+    join
+}                     from 'node:path'
+import {
+    red,
+    yellow
+}                     from '../../utils/colors.mjs'
+import {
+    log,
+    logLoadingTask
+}                     from '../../utils/loggings.mjs'
+import {
+    getUnscopedPackageName,
     packageTestsBenchmarksDirectory
-}                     from '../../_utils.mjs'
+}                     from '../../utils/packages.mjs'
 
 logLoadingTask( import.meta.filename )
-
-const {
-          red,
-          yellow
-      } = colors
 
 /**
  * @description Will run benchmarks with node
  */
 const runBenchmarksForBackendTask       = async ( done ) => {
 
-    const benchesPath = join( packageTestsBenchmarksDirectory, `/${ packageName }.benchmarks.js` )
+    const benchesPath = join( packageTestsBenchmarksDirectory, `/${ getUnscopedPackageName() }.benchmarks.js` )
     if ( !existsSync( benchesPath ) ) {
         log( yellow( `${ benchesPath } does not exist, skip backend benchmarks...` ) )
         done()

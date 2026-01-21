@@ -1,5 +1,5 @@
-import { packageName } from '../../_utils.mjs'
+import { getUnscopedPackageName } from '../../utils/packages.mjs'
 
 export default [
-    `${ packageName }.js`
+    `${ getUnscopedPackageName() }.js`
 ]

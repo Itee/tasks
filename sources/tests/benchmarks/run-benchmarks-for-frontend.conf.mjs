@@ -2,17 +2,17 @@ import { jsonReporter }       from '@itee/json-reporter'
 import { playwrightLauncher } from '@web/test-runner-playwright'
 
 export default {
-    files:          [
+    files: [
         'tests/benchmarks/**/*.bench.js'
     ],
-    debug:          false,
-    nodeResolve:    true,
-    browsers:       [
+    debug:       false,
+    nodeResolve: true,
+    browsers:    [
         playwrightLauncher( { product: 'chromium' } ),
         playwrightLauncher( { product: 'webkit' } ),
         playwrightLauncher( { product: 'firefox' } ),
     ],
-    testFramework:  {
+    testFramework: {
         path:   'node_modules/@itee/benchmarks-framework/benchmarks-framework.js',
         config: {
             foo: 'bar'
@@ -29,7 +29,7 @@ export default {
           </body>
         </html>
     `,
-    reporters:      [
+    reporters: [
         jsonReporter( {
             reportProgress: true
         } )

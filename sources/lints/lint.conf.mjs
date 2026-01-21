@@ -50,8 +50,8 @@ class RulesSet {
 }
 
 const sourceRulesSet = new RulesSet( {
-    name:    'sources',
-    files:   [
+    name:  'sources',
+    files: [
         'sources/**/*.js',
         'sources/**/*.cjs',
         'sources/**/*.mjs',
@@ -60,7 +60,7 @@ const sourceRulesSet = new RulesSet( {
     plugins: { js },
     extends: [ 'js/recommended' ],
     rules:   {
-        'no-multiple-empty-lines':  [
+        'no-multiple-empty-lines': [
             'error',
             {
                 'max': 2
@@ -80,7 +80,7 @@ const sourceRulesSet = new RulesSet( {
                 }
             }
         ],
-        'key-spacing':              [
+        'key-spacing': [
             'error',
             {
                 'align': {
@@ -94,8 +94,8 @@ const sourceRulesSet = new RulesSet( {
 } )
 
 const sourceCommonRulesSet = new RulesSet( {
-    name:    'sources/common',
-    files:   [
+    name:  'sources/common',
+    files: [
         'sources/common/**/*.js',
         'sources/common/**/*.cjs',
         'sources/common/**/*.mjs',
@@ -104,7 +104,7 @@ const sourceCommonRulesSet = new RulesSet( {
     plugins: { js },
     extends: [ 'js/recommended' ],
     rules:   {
-        'no-multiple-empty-lines':  [
+        'no-multiple-empty-lines': [
             'error',
             {
                 'max': 2
@@ -124,7 +124,7 @@ const sourceCommonRulesSet = new RulesSet( {
                 }
             }
         ],
-        'key-spacing':              [
+        'key-spacing': [
             'error',
             {
                 'align': {
@@ -138,8 +138,8 @@ const sourceCommonRulesSet = new RulesSet( {
 } )
 
 const sourceFrontendRulesSet = new RulesSet( {
-    name:            'sources/frontend',
-    files:           [
+    name:  'sources/frontend',
+    files: [
         'sources/frontend/**/*.js',
         'sources/frontend/**/*.mjs',
     ],
@@ -150,8 +150,8 @@ const sourceFrontendRulesSet = new RulesSet( {
 } )
 
 const sourceBackendRulesSet = new RulesSet( {
-    name:            'sources/backend',
-    files:           [
+    name:  'sources/backend',
+    files: [
         'sources/frontend/**/*.js',
         'sources/frontend/**/*.cjs',
         'sources/frontend/**/*.mjs',
@@ -163,8 +163,8 @@ const sourceBackendRulesSet = new RulesSet( {
 } )
 
 const testBenchmarksRulesSet = new RulesSet( {
-    name:            'tests/benchmarks',
-    files:           [
+    name:  'tests/benchmarks',
+    files: [
         'tests/benchmarks/**/*.js',
         'tests/benchmarks/**/*.cjs',
         'tests/benchmarks/**/*.mjs',
@@ -180,8 +180,8 @@ const testBenchmarksRulesSet = new RulesSet( {
 } )
 
 const testUnitsRulesSet = new RulesSet( {
-    name:            'tests/units',
-    files:           [
+    name:  'tests/units',
+    files: [
         'tests/units/**/*.js',
         'tests/units/**/*.cjs',
         'tests/units/**/*.mjs',
@@ -198,7 +198,7 @@ const testUnitsRulesSet = new RulesSet( {
 } )
 
 const mochaRecommendedRulesSet = new RulesSet( {
-    files:   [
+    files: [
         'tests/units/**/*.js',
         'tests/units/**/*.cjs',
         'tests/units/**/*.mjs',
@@ -256,7 +256,7 @@ const defaultConfigurator = new Configurator( {
         reportUnusedDisableDirectives: 'error',
         reportUnusedInlineConfigs:     'error'
     },
-    rulesSets:     [
+    rulesSets: [
         sourceRulesSet,
         testBenchmarksRulesSet,
         testUnitsRulesSet,

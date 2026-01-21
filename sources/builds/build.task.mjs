@@ -1,19 +1,17 @@
-import colors       from 'ansi-colors'
-import log          from 'fancy-log'
-import { basename } from 'node:path'
-import { rollup }   from 'rollup'
+import { basename }                from 'node:path'
+import { rollup }                  from 'rollup'
 import {
-    getTaskConfigurationFor,
-    logLoadingTask,
-}                   from '../_utils.mjs'
+    green,
+    red,
+    yellow,
+}                                  from '../utils/colors.mjs'
+import {
+    log,
+    logLoadingTask
+}                                  from '../utils/loggings.mjs'
+import { getTaskConfigurationFor } from '../utils/tasks.mjs'
 
 logLoadingTask( import.meta.filename )
-
-const {
-          red,
-          green,
-          yellow,
-      } = colors
 
 const buildTask       = async ( done ) => {
 

@@ -1,6 +1,6 @@
 import { series }                              from 'gulp'
 import { basename }                            from 'node:path'
-import { logLoadingTask }                      from '../../_utils.mjs'
+import { logLoadingTask }                      from '../../utils/loggings.mjs'
 import { checkBundlingFromEsmBuildImportTask } from './check-bundling-from-esm-build-import.task.mjs'
 import { checkBundlingFromEsmFilesDirectTask } from './check-bundling-from-esm-files-direct.task.mjs'
 import { checkBundlingFromEsmFilesImportTask } from './check-bundling-from-esm-files-import.task.mjs'

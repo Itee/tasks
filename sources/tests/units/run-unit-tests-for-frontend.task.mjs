@@ -1,14 +1,10 @@
-import { startTestRunner } from '@web/test-runner'
-import colors              from 'ansi-colors'
-import { basename }        from 'node:path'
-import {
-    getTaskConfigurationFor,
-    logLoadingTask
-}                          from '../../_utils.mjs'
+import { startTestRunner }         from '@web/test-runner'
+import { basename }                from 'node:path'
+import { red }                     from '../../utils/colors.mjs'
+import { logLoadingTask }          from '../../utils/loggings.mjs'
+import { getTaskConfigurationFor } from '../../utils/tasks.mjs'
 
 logLoadingTask( import.meta.filename )
-
-const { red } = colors
 
 /**
  * @description Will run unit tests with web-test-runner

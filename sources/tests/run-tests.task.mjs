@@ -1,6 +1,6 @@
 import { series }                 from 'gulp'
 import { basename }               from 'node:path'
-import { logLoadingTask }         from '../_utils.mjs'
+import { logLoadingTask }         from '../utils/loggings.mjs'
 import { runBenchmarksTestsTask } from './benchmarks/run-benchmarks.task.mjs'
 import { runUnitTestsTask }       from './units/run-unit-tests.task.mjs'
 

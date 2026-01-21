@@ -1,17 +1,19 @@
-import colors from 'ansi-colors'
-import log              from 'fancy-log'
-import child_process from 'node:child_process'
-import { basename }  from 'node:path'
-import { promisify } from 'node:util'
+import child_process                   from 'node:child_process'
+import { basename }                    from 'node:path'
+import { promisify }                   from 'node:util'
 import {
-    getTaskConfigurationPathFor,
+    cyan,
+    red
+}                                      from '../utils/colors.mjs'
+import {
+    log,
     logLoadingTask
-}                    from '../_utils.mjs'
+}                                      from '../utils/loggings.mjs'
+import { getTaskConfigurationPathFor } from '../utils/tasks.mjs'
 
 logLoadingTask( import.meta.filename )
 
 const execFile = promisify( child_process.execFile )
-const { red, cyan }  = colors
 
 /**
  * @method npm run lint

@@ -1,39 +1,39 @@
-import colors     from 'ansi-colors'
-import log        from 'fancy-log'
 import {
     existsSync,
     mkdirSync,
     readFileSync,
     rmSync,
     writeFileSync
-}                 from 'fs'
+}                                  from 'node:fs'
 import {
     basename,
     join,
     relative
-}                 from 'path'
-import { rollup } from 'rollup'
+}                                  from 'node:path'
+import { rollup }                  from 'rollup'
 import {
-    getTaskConfigurationFor,
-    logLoadingTask,
+    green,
+    magenta,
+    red
+}                                  from '../../utils/colors.mjs'
+import {
+    log,
+    logLoadingTask
+}                                  from '../../utils/loggings.mjs'
+import {
+    getUnscopedPackageName,
     packageBuildsDirectory,
-    packageName,
     packageTestsBundlesDirectory
-}                 from '../../_utils.mjs'
+}                                  from '../../utils/packages.mjs'
+import { getTaskConfigurationFor } from '../../utils/tasks.mjs'
 
 logLoadingTask( import.meta.filename )
-
-const {
-          red,
-          green,
-          magenta,
-      } = colors
 
 const checkBundlingFromEsmBuildImportTask       = async ( done ) => {
 
     const configuration = await getTaskConfigurationFor( import.meta.filename )
 
-    const buildFilePath = join( packageBuildsDirectory, `${ packageName }.esm.js` )
+    const buildFilePath = join( packageBuildsDirectory, `${ getUnscopedPackageName() }.esm.js` )
     if ( !existsSync( buildFilePath ) ) {
         done( red( buildFilePath + ' does not exist' ) )
     }
@@ -41,7 +41,7 @@ const checkBundlingFromEsmBuildImportTask       = async ( done ) => {
     const outputDir      = join( packageTestsBundlesDirectory, 'from_build_import' )
     const temporaryDir   = join( packageTestsBundlesDirectory, 'from_build_import', '.tmp' )
     const importDir      = relative( temporaryDir, packageBuildsDirectory )
-    const importFilePath = join( importDir, `${ packageName }.esm.js` )
+    const importFilePath = join( importDir, `${ getUnscopedPackageName() }.esm.js` )
 
     if ( existsSync( outputDir ) ) {
         log( 'Clean up', magenta( outputDir ) )

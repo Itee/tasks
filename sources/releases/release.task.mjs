@@ -1,6 +1,5 @@
 import { series }                from 'gulp'
 import { basename }              from 'node:path'
-import { logLoadingTask }        from '../_utils.mjs'
 import { buildTask }             from '../builds/build.task.mjs'
 import { cleanTask }             from '../cleans/clean.task.mjs'
 import { docTask }               from '../docs/doc.task.mjs'
@@ -8,6 +7,7 @@ import { lintTask }              from '../lints/lint.task.mjs'
 import { computeBenchmarksTask } from '../tests/benchmarks/compute-benchmarks.task.mjs'
 import { runTestsTask }          from '../tests/run-tests.task.mjs'
 import { computeUnitTestsTask }  from '../tests/units/compute-unit-tests.task.mjs'
+import { logLoadingTask }        from '../utils/loggings.mjs'
 
 logLoadingTask( import.meta.filename )
 

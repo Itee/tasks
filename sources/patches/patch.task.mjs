@@ -3,7 +3,7 @@ import {
     writeFileSync
 }                         from 'node:fs'
 import { basename }       from 'node:path'
-import { logLoadingTask } from '../_utils.mjs'
+import { logLoadingTask } from '../utils/loggings.mjs'
 
 logLoadingTask( import.meta.filename )
 
@@ -24,6 +24,14 @@ const patchTask       = ( done ) => {
             '\t\t\t\t\t' + 'break;' + '\n' +
             '\t\t\t\t' + 'case \'.js\':' + '\n' +
             '\t\t\t\t' + 'case \'.cjs\':'
+        const fileContent        = readFileSync( jsdocFilePath ).toString()
+        const patchedFileContent = fileContent.replace( searchValue, replaceValue )
+        writeFileSync( jsdocFilePath, patchedFileContent )
+    }
+    {
+        const jsdocFilePath      = 'node_modules/jsdoc/conf.json.EXAMPLE'
+        const searchValue        = '.js(doc|x)?'
+        const replaceValue       = '.(js|mjs|cjs|jsdoc|jsx)?'
         const fileContent        = readFileSync( jsdocFilePath ).toString()
         const patchedFileContent = fileContent.replace( searchValue, replaceValue )
         writeFileSync( jsdocFilePath, patchedFileContent )

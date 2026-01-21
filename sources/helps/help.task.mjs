@@ -1,27 +1,29 @@
-import colors from 'ansi-colors'
-import log    from 'fancy-log'
 import { basename } from 'node:path'
 import {
-    Indenter,
-    alignTextCenter,
-    alignTextLeft,
+    blue,
+    cyan,
+    green,
+    magenta,
+    red,
+    yellow
+}                   from '../utils/colors.mjs'
+import {
+    log,
+    logLoadingTask
+}                   from '../utils/loggings.mjs'
+import {
     getPrettyNodeVersion,
     getPrettyNpmVersion,
     getPrettyPackageName,
-    getPrettyPackageVersion,
-    logLoadingTask,
-}             from '../_utils.mjs'
+    getPrettyPackageVersion
+}                   from '../utils/packages.mjs'
+import {
+    alignTextCenter,
+    alignTextLeft,
+    Indenter,
+}                   from '../utils/texts.mjs'
 
 logLoadingTask( import.meta.filename )
-
-const {
-          red,
-          green,
-          blue,
-          cyan,
-          yellow,
-          magenta
-      } = colors
 
 /**
  * @method npm run help ( default )

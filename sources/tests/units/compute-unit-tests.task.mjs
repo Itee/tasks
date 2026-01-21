@@ -1,35 +1,39 @@
-import colors              from 'ansi-colors'
-import childProcess        from 'child_process'
-import log                 from 'fancy-log'
-import { glob }            from 'glob'
-import { isNotEmptyArray } from 'itee-validators'
+import { isNotEmptyArray }         from 'itee-validators'
+import childProcess                from 'node:child_process'
 import {
     basename,
     dirname,
     extname,
     join,
-    normalize,
     relative
-}                          from 'path'
+}                                  from 'node:path'
 import {
-    Indenter,
+    red,
+    yellow
+}                                  from '../../utils/colors.mjs'
+import {
     createDirectoryIfNotExist,
     createFile,
+    getJavascriptSourceFiles
+}                                  from '../../utils/files.mjs'
+import {
+    log,
+    logLoadingTask
+}                                  from '../../utils/loggings.mjs'
+import {
     getPrettyPackageName,
-    getTaskConfigurationFor,
-    logLoadingTask,
-    packageName,
+    getUnscopedPackageName,
     packageNodeModulesDirectory,
     packageSourcesDirectory,
     packageTestsUnitsDirectory
-}                          from '../../_utils.mjs'
+}                                  from '../../utils/packages.mjs'
+import { getTaskConfigurationFor } from '../../utils/tasks.mjs'
+import {
+    Indenter,
+    toCamelCase
+}                                  from '../../utils/texts.mjs'
 
 logLoadingTask( import.meta.filename )
-
-const {
-          red,
-          yellow,
-      } = colors
 
 /**
  * @description Will generate unit test files from source code using type inference from comments
@@ -38,20 +42,8 @@ const computeUnitTestsTask       = async ( done ) => {
 
     createDirectoryIfNotExist( packageTestsUnitsDirectory )
 
-    // Get task configuration
     const filePathsToIgnore = await getTaskConfigurationFor( import.meta.filename )
-
-    // Get source files to process
-    const pattern     = join( packageSourcesDirectory, '**' )
-    const sourceFiles = glob.sync( pattern )
-                            .map( filePath => normalize( filePath ) )
-                            .filter( filePath => {
-                                const fileName         = basename( filePath )
-                                const isJsFile         = fileName.endsWith( '.js' )
-                                const isNotPrivateFile = !fileName.startsWith( '_' )
-                                const isNotIgnoredFile = !filePathsToIgnore.includes( fileName )
-                                return isJsFile && isNotPrivateFile && isNotIgnoredFile
-                            } )
+    const sourceFiles       = getJavascriptSourceFiles( filePathsToIgnore )
 
     const unitsImportMap = []
     for ( let sourceFile of sourceFiles ) {
@@ -59,20 +51,26 @@ const computeUnitTestsTask       = async ( done ) => {
         const specificFilePath = sourceFile.replace( packageSourcesDirectory, '' )
         const specificDir      = dirname( specificFilePath )
 
-        const fileName     = basename( sourceFile, extname( sourceFile ) )
-        const unitFileName = `${ fileName }.unit.mjs`
-        const unitDirPath  = join( packageTestsUnitsDirectory, specificDir )
-        const unitFilePath = join( unitDirPath, unitFileName )
+        const fileName          = basename( sourceFile, extname( sourceFile ) )
+        const camelCaseFileName = toCamelCase( fileName )
+        const unitFileName      = `${ camelCaseFileName }.unit.mjs`
+        const unitDirPath       = join( packageTestsUnitsDirectory, specificDir )
+        const unitFilePath      = join( unitDirPath, unitFileName )
 
-        const nsName         = `${ fileName }Namespace`
-        const unitName       = `${ fileName }Units`
+        const nsName         = `${ camelCaseFileName }Namespace`
+        const unitName       = `${ camelCaseFileName }Units`
         const importDirPath  = relative( unitDirPath, packageSourcesDirectory )
         const importFilePath = join( importDirPath, specificFilePath ).replace( /\\/g, '/' )
 
         try {
 
             const jsdocPath   = join( packageNodeModulesDirectory, '/jsdoc/jsdoc.js' )
-            const jsdocOutput = childProcess.execFileSync( 'node', [ jsdocPath, '-X', sourceFile ] ).toString()
+            const jsdocOutput = childProcess.execFileSync( 'node', [ jsdocPath, '--explain', sourceFile ] ).toString()
+
+            if ( jsdocOutput.includes( 'There are no input files to process' ) ) {
+                log( 'Error   ', red( `${ sourceFile }, no input files to process` ) )
+                continue
+            }
 
             const classNames    = []
             const usedLongnames = []
@@ -534,7 +532,7 @@ const computeUnitTestsTask       = async ( done ) => {
 
     }
 
-    const unitsFilePath = join( packageTestsUnitsDirectory, `${ packageName }.units.mjs` )
+    const unitsFilePath = join( packageTestsUnitsDirectory, `${ getUnscopedPackageName() }.units.mjs` )
     createFile( unitsFilePath, unitsTemplate )
 
     done()

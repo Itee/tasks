@@ -1,5 +1,5 @@
-import { join }                        from 'path'
-import { iteePackageSourcesDirectory } from '../../_utils.mjs'
+import { join }                        from 'node:path'
+import { iteePackageSourcesDirectory } from '../../utils/packages.mjs'
 
 export default [
     join( iteePackageSourcesDirectory, 'tests/units/run-unit-tests-for-backend.task.mjs' ),

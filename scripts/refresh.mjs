@@ -1,25 +1,23 @@
-import colors            from 'ansi-colors'
-import log               from 'fancy-log'
-import { writeFileSync } from 'fs'
+import { writeFileSync }           from 'node:fs'
 import {
     basename,
     join,
     relative
-} from 'path'
+}                                  from 'node:path'
 import {
-    getFilesFrom,
-    getTaskConfigurationFor,
+    green,
+    yellow
+}                                  from '../sources/utils/colors.mjs'
+import { getFilesFrom }            from '../sources/utils/files.mjs'
+import { log }                     from '../sources/utils/loggings.mjs'
+import {
     iteePackageRootDirectory,
     iteePackageSourcesDirectory,
     packageNodeModulesDirectory,
     packageRootDirectory,
     packageTasksDirectory
-} from '../sources/_utils.mjs'
-
-const {
-          green,
-          yellow
-      } = colors
+}                                  from '../sources/utils/packages.mjs'
+import { getTaskConfigurationFor } from '../sources/utils/tasks.mjs'
 
 const configuration = await getTaskConfigurationFor( import.meta.filename )
 

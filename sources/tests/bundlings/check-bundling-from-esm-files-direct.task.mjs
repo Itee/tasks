@@ -1,32 +1,31 @@
-import colors     from 'ansi-colors'
-import log        from 'fancy-log'
 import {
     existsSync,
     rmSync
-}                 from 'fs'
-import { glob }   from 'glob'
+}                                   from 'node:fs'
 import {
     basename,
     dirname,
     extname,
-    join,
-    normalize
-}                 from 'path'
-import { rollup } from 'rollup'
+    join
+}                                   from 'node:path'
+import { rollup }                   from 'rollup'
 import {
-    getTaskConfigurationFor,
-    logLoadingTask,
+    green,
+    magenta,
+    red,
+}                                   from '../../utils/colors.mjs'
+import { getJavascriptSourceFiles } from '../../utils/files.mjs'
+import {
+    log,
+    logLoadingTask
+}                                   from '../../utils/loggings.mjs'
+import {
     packageSourcesDirectory,
     packageTestsBundlesDirectory
-}                 from '../../_utils.mjs'
+}                                   from '../../utils/packages.mjs'
+import { getTaskConfigurationFor }  from '../../utils/tasks.mjs'
 
 logLoadingTask( import.meta.filename )
-
-const {
-          red,
-          green,
-          magenta,
-      } = colors
 
 /**
  * @description In view to detect bundling side effects this task will
@@ -43,18 +42,7 @@ const checkBundlingFromEsmFilesDirectTask       = async ( done ) => {
     }
 
     const configuration = await getTaskConfigurationFor( import.meta.filename )
-
-    // Get source files to process
-    const pattern     = join( packageSourcesDirectory, '**' )
-    const sourceFiles = glob.sync( pattern )
-                            .map( filePath => normalize( filePath ) )
-                            .filter( filePath => {
-                                const fileName         = basename( filePath )
-                                const isJsFile         = fileName.endsWith( '.js' )
-                                const isNotPrivateFile = !fileName.startsWith( '_' )
-                                const isNotIgnoredFile = !configuration.ignoredFiles.includes( fileName )
-                                return isJsFile && isNotPrivateFile && isNotIgnoredFile
-                            } )
+    const sourceFiles   = getJavascriptSourceFiles( configuration )
 
     for ( let sourceFile of sourceFiles ) {
 

@@ -1,29 +1,31 @@
-import colors         from 'ansi-colors'
-import { spawn }      from 'child_process'
-import log            from 'fancy-log'
-import { existsSync } from 'fs'
-import { basename }   from 'node:path'
-import { join }       from 'path'
+import { spawn }      from 'node:child_process'
+import { existsSync } from 'node:fs'
 import {
-    logLoadingTask,
-    packageName,
+    basename,
+    join
+}                     from 'node:path'
+import {
+    red,
+    yellow
+}                     from '../../utils/colors.mjs'
+import {
+    log,
+    logLoadingTask
+}                     from '../../utils/loggings.mjs'
+import {
+    getUnscopedPackageName,
     packageNodeModulesDirectory,
     packageTestsUnitsDirectory
-}                     from '../../_utils.mjs'
+}                     from '../../utils/packages.mjs'
 
 logLoadingTask( import.meta.filename )
-
-const {
-          red,
-          yellow,
-      } = colors
 
 /**
  * @description Will run unit tests with node
  */
 const runUnitTestsForBackendTask       = ( done ) => {
 
-    const testsPath = join( packageTestsUnitsDirectory, `/${ packageName }.units.mjs` )
+    const testsPath = join( packageTestsUnitsDirectory, `/${ getUnscopedPackageName() }.units.mjs` )
     if ( !existsSync( testsPath ) ) {
         log( yellow( `${ testsPath } does not exist, skip backend unit tests...` ) )
         done()

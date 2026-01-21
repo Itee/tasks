@@ -1,10 +1,12 @@
 import nodeResolve from '@rollup/plugin-node-resolve'
 import cleanup     from 'rollup-plugin-cleanup'
+import { red }     from '../../utils/colors.mjs'
+import { log }     from '../../utils/loggings.mjs'
 
 export default {
-    input:     null,
-    external:  [ '' ],
-    plugins:   [
+    input:    null,
+    external: [ '' ],
+    plugins:  [
         nodeResolve( {
             preferBuiltins: true
         } ),
@@ -12,7 +14,7 @@ export default {
             comments: 'all' // else remove __PURE__ declaration... -_-'
         } )
     ],
-    onwarn:    ( {
+    onwarn: ( {
         loc,
         frame,
         message
@@ -22,11 +24,11 @@ export default {
         if ( message.includes( 'Circular dependency' ) ) { return }
         if ( message.includes( 'Generated an empty chunk' ) ) { return }
 
-        if ( loc ) {
-            process.stderr.write( `/!\\ ${ loc.file } (${ loc.line }:${ loc.column }) ${ frame } ${ message }\n` )
-        } else {
-            process.stderr.write( `/!\\ ${ message }\n` )
-        }
+        let errorMessage = ( loc )
+                           ? `/!\\ ${ loc.file } (${ loc.line }:${ loc.column }) ${ frame } ${ message }\n`
+                           : `/!\\ ${ message }\n`
+
+        log( red( errorMessage ) )
 
     },
     treeshake: {
@@ -37,7 +39,7 @@ export default {
         tryCatchDeoptimization:           true,
         unknownGlobalSideEffects:         true
     },
-    output:    {
+    output: {
         indent: '\t',
         format: 'esm',
         file:   null

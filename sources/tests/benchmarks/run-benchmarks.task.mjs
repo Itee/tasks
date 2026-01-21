@@ -1,9 +1,9 @@
-import { basename } from 'node:path'
+import { basename }       from 'node:path'
+import { logLoadingTask } from '../../utils/loggings.mjs'
 import {
     getTaskConfigurationFor,
-    logLoadingTask,
     serializeTasksFrom
-}                   from '../../_utils.mjs'
+}                         from '../../utils/tasks.mjs'
 
 logLoadingTask( import.meta.filename )
 
