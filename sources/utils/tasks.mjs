@@ -9,14 +9,13 @@ import {
     relative
 }                      from 'node:path'
 import {
-    blue,
     cyan,
-    magenta,
     red,
 }                      from './colors.mjs'
 import { getJsonFrom } from './files.mjs'
 import { log }         from './loggings.mjs'
 import {
+    iteePackageRootDirectory,
     iteePackageSourcesDirectory,
     packageRootDirectory,
     packageTasksConfigurationsDirectory,
@@ -33,20 +32,10 @@ async function getTasksFrom( taskFiles = [] ) {
 
             const module = await import(taskFile)
 
-            const exportStrings = []
             for ( const moduleKey in module ) {
                 const task = module[ moduleKey ]
                 tasks.push( task )
-
-                const name         = task.name ?? null
-                const displayName  = task.displayName ?? null
-                const fullName     = ( moduleKey !== name ) ? `${ blue( moduleKey ) }( ${ magenta( name ) } )` : `${ blue( name ) }`
-                const exportAs     = ( displayName ) ? ` as ${ cyan( displayName ) }` : ''
-                const exportString = fullName + exportAs
-                exportStrings.push( exportString )
             }
-
-            //log( 'Process ', green( relativeTaskFile ), `with task${ ( exportStrings.length > 1 ) ? 's' : '' }`, exportStrings.join( ', ' ) )
 
         } catch ( error ) {
 
@@ -79,7 +68,7 @@ async function parallelizeTasksFrom( taskFiles = [] ) {
 function getTaskConfigurationPathFor( filename ) {
 
     // Get relative path of the task between internal or user defined
-    let relativeTaskPath = filename.includes( iteePackageSourcesDirectory )
+    let relativeTaskPath = filename.includes( iteePackageRootDirectory )
                            ? relative( iteePackageSourcesDirectory, filename )
                            : relative( packageTasksDirectory, filename )
 
@@ -93,23 +82,24 @@ function getTaskConfigurationPathFor( filename ) {
         '.conf.mjs',
     ]
 
-    const packageConfigurationPaths = []
-    const defaultConfigurationPaths = []
-
+    // Generate all potential config file paths
+    const configurationPaths = []
     for ( const replaceValue of replaceValues ) {
         const configurationLocation    = relativeTaskPath.replace( searchValue, replaceValue )
         const packageConfigurationPath = join( packageTasksConfigurationsDirectory, configurationLocation )
-        const defaultConfigurationPath = join( iteePackageSourcesDirectory, configurationLocation )
 
-        packageConfigurationPaths.push( packageConfigurationPath )
-        defaultConfigurationPaths.push( defaultConfigurationPath )
+        configurationPaths.push( packageConfigurationPath )
     }
 
     // Take care of the configuration search order (package first then default !)
-    const configurationPaths = [ ...packageConfigurationPaths, ...defaultConfigurationPaths ]
-    let configurationPath    = undefined
+    const defaultConfigFilename = filename.includes( '.task.' )
+                                  ? filename.replace( '.task.', '.conf.' )
+                                  : filename.replace( '.mjs', '.conf.mjs' )
+
+    configurationPaths.push( defaultConfigFilename )
 
     // Looking for existing configuration file
+    let configurationPath = undefined
     for ( const packageConfigurationPath of configurationPaths ) {
 
         if ( existsSync( packageConfigurationPath ) ) {
