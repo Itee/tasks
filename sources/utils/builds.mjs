@@ -123,14 +123,15 @@ function getOutputFileExtensionBasedOnFileFormat( format ) {
  * @param options
  * @return {Array.<json>} An array of rollup configuration
  */
-function createRollupConfigs( options = undefined ) {
+function createRollupConfigs( options = {} ) {
 
-    const _options = options ? options : {
+    const _options = {
         input:     join( packageSourcesDirectory, `${ getUnscopedPackageName() }.js` ),
         output:    packageBuildsDirectory,
         formats:   [ 'esm', 'cjs', 'iife' ],
         envs:      [ 'dev', 'prod' ],
-        treeshake: true
+        treeshake: true,
+        ...options
     }
 
     const {
