@@ -15,7 +15,7 @@ import {
     createDirectoryIfNotExist,
     createFile,
     getJavascriptSourceFiles
-} from '../../utils/files.mjs'
+}                                  from '../../utils/files.mjs'
 import {
     log,
     logLoadingTask
@@ -28,7 +28,10 @@ import {
     packageTestsUnitsDirectory
 }                                  from '../../utils/packages.mjs'
 import { getTaskConfigurationFor } from '../../utils/tasks.mjs'
-import { Indenter }                from '../../utils/texts.mjs'
+import {
+    Indenter,
+    toCamelCase
+}                                  from '../../utils/texts.mjs'
 
 logLoadingTask( import.meta.filename )
 
@@ -48,13 +51,14 @@ const computeUnitTestsTask       = async ( done ) => {
         const specificFilePath = sourceFile.replace( packageSourcesDirectory, '' )
         const specificDir      = dirname( specificFilePath )
 
-        const fileName     = basename( sourceFile, extname( sourceFile ) )
-        const unitFileName = `${ fileName }.unit.mjs`
-        const unitDirPath  = join( packageTestsUnitsDirectory, specificDir )
-        const unitFilePath = join( unitDirPath, unitFileName )
+        const fileName          = basename( sourceFile, extname( sourceFile ) )
+        const camelCaseFileName = toCamelCase( fileName )
+        const unitFileName      = `${ camelCaseFileName }.unit.mjs`
+        const unitDirPath       = join( packageTestsUnitsDirectory, specificDir )
+        const unitFilePath      = join( unitDirPath, unitFileName )
 
-        const nsName         = `${ fileName }Namespace`
-        const unitName       = `${ fileName }Units`
+        const nsName         = `${ camelCaseFileName }Namespace`
+        const unitName       = `${ camelCaseFileName }Units`
         const importDirPath  = relative( unitDirPath, packageSourcesDirectory )
         const importFilePath = join( importDirPath, specificFilePath ).replace( /\\/g, '/' )
 

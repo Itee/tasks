@@ -55,6 +55,16 @@ function IndenterFactory( indentationChar = '\t', indentationLevel = 5 ) {
 
 }
 
+function toCamelCase( string ) {
+
+    return string
+        .trim()
+        .toLowerCase()
+        .replace( /[^a-zA-Z0-9]+(.)/g, ( _, char ) => char.toUpperCase() )
+        .replace( /^[A-Z]/, ( char ) => char.toLowerCase() )
+
+}
+
 class Indenter {
 
     constructor( indentationChar = '\t' ) {
@@ -83,5 +93,6 @@ export {
     alignTextCenter,
     alignTextLeft,
     alignTextRight,
+    toCamelCase,
     IndenterFactory as Indenter
 }

@@ -27,6 +27,7 @@ import {
     packageTestsDirectory
 }                                  from '../../utils/packages.mjs'
 import { getTaskConfigurationFor } from '../../utils/tasks.mjs'
+import { toCamelCase }             from '../../utils/texts.mjs'
 
 logLoadingTask( import.meta.filename )
 
@@ -47,12 +48,13 @@ const computeBenchmarksTask       = async ( done ) => {
         const specificFilePath = sourceFile.replace( packageSourcesDirectory, '' )
         const specificDir      = dirname( specificFilePath )
 
-        const fileName      = basename( sourceFile, extname( sourceFile ) )
-        const benchFileName = `${ fileName }.bench.js`
-        const benchDirPath  = join( packageTestsBenchmarksDirectory, specificDir )
-        const benchFilePath = join( benchDirPath, benchFileName )
+        const fileName          = basename( sourceFile, extname( sourceFile ) )
+        const camelCaseFileName = toCamelCase( fileName )
+        const benchFileName     = `${ camelCaseFileName }.bench.js`
+        const benchDirPath      = join( packageTestsBenchmarksDirectory, specificDir )
+        const benchFilePath     = join( benchDirPath, benchFileName )
 
-        const nsName         = `${ fileName }Namespace`
+        const nsName         = `${ camelCaseFileName }Namespace`
         const importDirPath  = relative( benchDirPath, packageSourcesDirectory )
         const importFilePath = join( importDirPath, specificFilePath ).replace( /\\/g, '/' )
 
