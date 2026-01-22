@@ -41,7 +41,7 @@ const checkBundlingFromEsmFilesImportTask       = async ( done ) => {
     }
 
     const configuration = await getTaskConfigurationFor( import.meta.filename )
-    const sourceFiles   = getJavascriptSourceFiles( configuration )
+    const sourceFiles   = getJavascriptSourceFiles( configuration.ignoredFiles )
 
     for ( let sourceFile of sourceFiles ) {
 
