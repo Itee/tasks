@@ -1,3 +1,8 @@
+# [v1.4.2](https://github.com/Itee/tasks/compare/v1.4.1...v1.4.2) (2026-01-22)
+
+## 🐛 Bug Fixes
+- [`9cf06ee`](https://github.com/Itee/tasks/commit/9cf06ee)  (bundling) fix wrong config usage for check-bundling-from-esm-files-direct.task
+
 # [v1.4.1](https://github.com/Itee/tasks/compare/v1.4.0...v1.4.1) (2026-01-22)
 
 # [v1.4.0](https://github.com/Itee/tasks/compare/v1.3.3...v1.4.0) (2026-01-21)
