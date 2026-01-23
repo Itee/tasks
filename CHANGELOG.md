@@ -1,3 +1,8 @@
+# [v1.4.5](https://github.com/Itee/tasks/compare/v1.4.4...v1.4.5) (2026-01-23)
+
+## 🐛 Bug Fixes
+- [`ebb02e3`](https://github.com/Itee/tasks/commit/ebb02e3)  (testing) fix package path
+
 # [v1.4.4](https://github.com/Itee/tasks/compare/v1.4.3...v1.4.4) (2026-01-22)
 
 # [v1.4.3](https://github.com/Itee/tasks/compare/v1.4.2...v1.4.3) (2026-01-22)
